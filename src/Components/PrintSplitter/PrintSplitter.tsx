@@ -70,8 +70,6 @@ const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
     const divElem = divRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {
-      console.log({ naturals: { width: imageElem.naturalWidth, height: imageElem.naturalHeight } });
-      console.log({ elem: { width: imageElem.width, height: imageElem.height } });
       const canvasPageWidth = canvasSizingHelperElem.offsetWidth;
       const canvasPageHeight = canvasSizingHelperElem.offsetHeight;
       const marginsInPixels = {
