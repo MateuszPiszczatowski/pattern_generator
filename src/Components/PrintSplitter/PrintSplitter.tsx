@@ -83,6 +83,16 @@ function getMarginInPx(
   };
 }
 
+function getImageDrawSizes(
+  canvasDrawSizes: IWidthAndHeight,
+  imageElem: HTMLImageElement
+): IWidthAndHeight {
+  return {
+    width: canvasDrawSizes.width * (imageElem.naturalWidth / imageElem.width),
+    height: canvasDrawSizes.height * (imageElem.naturalHeight / imageElem.height),
+  };
+}
+
 function onImageLoad(
   canvasHelper: HTMLDivElement,
   canvasParent: HTMLDivElement,
@@ -93,12 +103,11 @@ function onImageLoad(
 ): void {
   const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
   const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
-  const { width: canvasDrawWidth, height: canvasDrawHeight } = getCanvasDrawSizes({
+  const canvasDrawSizes = getCanvasDrawSizes({
     ...canvasPxSizes,
     margin: marginInPixels,
   });
-  const imageDrawWidth = (canvasDrawWidth * imageElem.naturalWidth) / imageElem.width;
-  const imageDrawHeight = canvasDrawHeight * (imageElem.naturalHeight / imageElem.height);
+  const imageDrawSizes = getImageDrawSizes(canvasDrawSizes, imageElem);
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       const canvasPage = document.createElement("canvas");
@@ -111,14 +120,14 @@ function onImageLoad(
       if (context) {
         context.drawImage(
           imageElem,
-          imageDrawWidth * col,
-          imageDrawHeight * row,
-          imageDrawWidth,
-          imageDrawHeight,
+          imageDrawSizes.width * col,
+          imageDrawSizes.height * row,
+          imageDrawSizes.width,
+          imageDrawSizes.height,
           marginInPixels.left,
           marginInPixels.top,
-          canvasDrawWidth,
-          canvasDrawHeight
+          canvasDrawSizes.width,
+          canvasDrawSizes.height
         );
       }
     }
