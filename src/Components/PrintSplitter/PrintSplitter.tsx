@@ -19,24 +19,44 @@ function getImageSizesInPaperUnits(
   return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
 }
 
+function getCanvasRowsCount(paperHeightWithoutMargins: number, imageHeight: number): number {
+  let rowsCount = imageHeight / paperHeightWithoutMargins;
+  rowsCount = rowsCount > Math.round(rowsCount) ? Math.round(rowsCount) + 1 : Math.round(rowsCount);
+  return rowsCount;
+}
+
+function getCanvasColsCount(paperWidthWithoutMargins: number, imageWidth: number): number {
+  let colsCount = imageWidth / paperWidthWithoutMargins;
+  colsCount = colsCount > Math.round(colsCount) ? Math.round(colsCount) + 1 : Math.round(colsCount);
+  return colsCount;
+}
+
+function getPaperDrawWidth(height: number, margins: { left: number; right: number }): number {
+  return height - (margins.left + margins.right);
+}
+function getPaperDrawHeight(width: number, margins: { top: number; bottom: number }): number {
+  return width - (margins.top + margins.bottom);
+}
+
+function getPaperDrawSizes(paperConfig: paperUtils.IPaperConfig): {
+  drawWidth: number;
+  drawHeight: number;
+} {
+  return {
+    drawWidth: getPaperDrawWidth(paperConfig.width, paperConfig.margin),
+    drawHeight: getPaperDrawHeight(paperConfig.height, paperConfig.margin),
+  };
+}
+
 function getCanvasPages(
   imageConfig: imageUtils.IImageConfig,
   paperConfig: paperUtils.IPaperConfig
 ): { rows: number; cols: number } {
   const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
     getImageSizesInPaperUnits(imageConfig, paperConfig);
-  const widthPerPage = paperConfig.width - (paperConfig.margin.left + paperConfig.margin.right);
-  const heightPerPage = paperConfig.height - (paperConfig.margin.top + paperConfig.margin.bottom);
-  let pagesColsCount = imageWidthInPaperUnits / widthPerPage;
-  pagesColsCount =
-    pagesColsCount > Math.round(pagesColsCount)
-      ? Math.round(pagesColsCount) + 1
-      : Math.round(pagesColsCount);
-  let pagesRowsCount = imageHeightInPaperUnits / heightPerPage;
-  pagesRowsCount =
-    pagesRowsCount > Math.round(pagesRowsCount)
-      ? Math.round(pagesRowsCount) + 1
-      : Math.round(pagesRowsCount);
+  const { drawWidth, drawHeight } = getPaperDrawSizes(paperConfig);
+  const pagesColsCount = getCanvasColsCount(drawWidth, imageWidthInPaperUnits);
+  const pagesRowsCount = getCanvasRowsCount(drawHeight, imageHeightInPaperUnits);
   return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
