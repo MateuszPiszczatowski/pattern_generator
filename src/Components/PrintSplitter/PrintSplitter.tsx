@@ -1,11 +1,16 @@
 import * as paperUtils from "../../utils/paperUtils";
 import * as imageUtils from "../../utils/imageConfig";
-import { MutableRefObject, useEffect, useRef } from "react";
-
-interface IWidthAndHeight {
-  width: number;
-  height: number;
-}
+import {
+  Dispatch,
+  MutableRefObject,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import CanvasPage from "../CanvasPage/CanvasPage";
+import { IWidthAndHeight } from "../../utils/interfaces";
 
 function getImageSizesInPaperUnits(
   imageConfig: imageUtils.IImageConfig,
@@ -95,11 +100,11 @@ function getImageDrawSizes(
 
 function onImageLoad(
   canvasHelper: HTMLDivElement,
-  canvasParent: HTMLDivElement,
   paperConfig: paperUtils.IPaperConfig,
   imageElem: HTMLImageElement,
   cols: number,
-  rows: number
+  rows: number,
+  setPagesState: Dispatch<SetStateAction<ReactNode[]>>
 ): void {
   const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
   const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
@@ -108,66 +113,63 @@ function onImageLoad(
     margin: marginInPixels,
   });
   const imageDrawSizes = getImageDrawSizes(canvasDrawSizes, imageElem);
+  const canvases: JSX.Element[] = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      const canvasPage = document.createElement("canvas");
-      canvasPage.width = canvasPxSizes.width;
-      canvasPage.height = canvasPxSizes.height;
-      canvasPage.style.width = `${paperConfig.width}${paperConfig.unit}`;
-      canvasPage.style.height = `${paperConfig.height}${paperConfig.unit}`;
-      canvasParent.appendChild(canvasPage);
-      const context = canvasPage.getContext("2d");
-      if (context) {
-        context.drawImage(
-          imageElem,
-          imageDrawSizes.width * col,
-          imageDrawSizes.height * row,
-          imageDrawSizes.width,
-          imageDrawSizes.height,
-          marginInPixels.left,
-          marginInPixels.top,
-          canvasDrawSizes.width,
-          canvasDrawSizes.height
-        );
-      }
+      canvases.push(
+        <CanvasPage
+          {...{
+            paperConfig,
+            imageSource: imageElem,
+            imageDrawSizes,
+            imageDrawPosition: { x: imageDrawSizes.width * col, y: imageDrawSizes.height * row },
+            marginInPixels,
+            canvasDrawSizes,
+          }}
+        />
+      );
+      setPagesState(canvases);
     }
   }
-  imageElem.hidden = true;
-  canvasHelper.hidden = true;
 }
 
 const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
+  const [pages, setPages] = useState([] as ReactNode[]);
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
-  const canvasParentRef: MutableRefObject<null | HTMLDivElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
+  useEffect(() => {
+    console.log(pages);
+  }, [pages]);
   useEffect(() => {
     const { cols, rows } = getCanvasPages(imageConfig, paperConfig);
     const imageElem = imageRef.current!;
-    const canvasParentElem = canvasParentRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {
-      onImageLoad(canvasSizingHelperElem, canvasParentElem, paperConfig, imageElem, cols, rows);
+      onImageLoad(canvasSizingHelperElem, paperConfig, imageElem, cols, rows, setPages);
     };
     imageElem.src = imageConfig.source;
   }, [imageConfig, paperConfig]);
   return (
-    <>
+    <section>
       <div
         ref={canvasSizingHelper}
         style={{
+          position: "absolute",
+          left: `-${paperConfig.width}${paperConfig.unit}`,
           width: `${paperConfig.width}${paperConfig.unit}`,
           height: `${paperConfig.height}${paperConfig.unit}`,
         }}
       />
       <img
         ref={imageRef}
-        id="print-splitter-hidden-img"
         style={{
+          position: "absolute",
+          left: `-${imageConfig.width}${imageConfig.unit}`,
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
-      <div ref={canvasParentRef} id="print-splitter" style={{ border: "1px solid black" }}></div>
-    </>
+      <article style={{ border: "1px solid black" }}>{...pages}</article>
+    </section>
   );
 };
 
