@@ -2,10 +2,15 @@ import * as paperUtils from "../../utils/paperUtils";
 import * as imageUtils from "../../utils/imageConfig";
 import { MutableRefObject, useEffect, useRef } from "react";
 
+interface IWidthAndHeight {
+  width: number;
+  height: number;
+}
+
 function getImageSizesInPaperUnits(
   imageConfig: imageUtils.IImageConfig,
   paperConfig: paperUtils.IPaperConfig
-): { width: number; height: number } {
+): IWidthAndHeight {
   const imageWidthInPaperUnits = paperUtils.changeUnit(
     imageConfig.width,
     imageConfig.unit,
@@ -19,33 +24,16 @@ function getImageSizesInPaperUnits(
   return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
 }
 
-function getCanvasRowsCount(paperHeightWithoutMargins: number, imageHeight: number): number {
-  let rowsCount = imageHeight / paperHeightWithoutMargins;
+function getCanvasRowsCount(paperHeightWithoutMargin: number, imageHeight: number): number {
+  let rowsCount = imageHeight / paperHeightWithoutMargin;
   rowsCount = rowsCount > Math.round(rowsCount) ? Math.round(rowsCount) + 1 : Math.round(rowsCount);
   return rowsCount;
 }
 
-function getCanvasColsCount(paperWidthWithoutMargins: number, imageWidth: number): number {
-  let colsCount = imageWidth / paperWidthWithoutMargins;
+function getCanvasColsCount(paperWidthWithoutMargin: number, imageWidth: number): number {
+  let colsCount = imageWidth / paperWidthWithoutMargin;
   colsCount = colsCount > Math.round(colsCount) ? Math.round(colsCount) + 1 : Math.round(colsCount);
   return colsCount;
-}
-
-function getPaperDrawWidth(height: number, margins: { left: number; right: number }): number {
-  return height - (margins.left + margins.right);
-}
-function getPaperDrawHeight(width: number, margins: { top: number; bottom: number }): number {
-  return width - (margins.top + margins.bottom);
-}
-
-function getPaperDrawSizes(paperConfig: paperUtils.IPaperConfig): {
-  drawWidth: number;
-  drawHeight: number;
-} {
-  return {
-    drawWidth: getPaperDrawWidth(paperConfig.width, paperConfig.margin),
-    drawHeight: getPaperDrawHeight(paperConfig.height, paperConfig.margin),
-  };
 }
 
 function getCanvasPages(
@@ -54,63 +42,105 @@ function getCanvasPages(
 ): { rows: number; cols: number } {
   const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
     getImageSizesInPaperUnits(imageConfig, paperConfig);
-  const { drawWidth, drawHeight } = getPaperDrawSizes(paperConfig);
+  const { width: drawWidth, height: drawHeight } = getCanvasDrawSizes(paperConfig);
   const pagesColsCount = getCanvasColsCount(drawWidth, imageWidthInPaperUnits);
   const pagesRowsCount = getCanvasRowsCount(drawHeight, imageHeightInPaperUnits);
   return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
+function getCanvasDrawWidth(height: number, margin: paperUtils.IPaperMargin): number {
+  return height - (margin.left + margin.right);
+}
+
+function getCanvasDrawHeight(width: number, margin: paperUtils.IPaperMargin): number {
+  return width - (margin.top + margin.bottom);
+}
+
+function getCanvasDrawSizes(canvasConfig: {
+  width: number;
+  height: number;
+  margin: paperUtils.IPaperMargin;
+}): IWidthAndHeight {
+  return {
+    width: getCanvasDrawWidth(canvasConfig.width, canvasConfig.margin),
+    height: getCanvasDrawHeight(canvasConfig.height, canvasConfig.margin),
+  };
+}
+
+function extractCanvasPxSizes(sourceElem: HTMLDivElement): IWidthAndHeight {
+  return { width: sourceElem.offsetWidth, height: sourceElem.offsetHeight };
+}
+
+function getMarginInPx(
+  paperConfig: paperUtils.IPaperConfig,
+  canvasPxSizes: IWidthAndHeight
+): paperUtils.IPaperMargin {
+  return {
+    top: (paperConfig.margin.top / paperConfig.height) * canvasPxSizes.height,
+    right: (paperConfig.margin.right / paperConfig.width) * canvasPxSizes.width,
+    bottom: (paperConfig.margin.bottom / paperConfig.height) * canvasPxSizes.height,
+    left: (paperConfig.margin.left / paperConfig.width) * canvasPxSizes.width,
+  };
+}
+
+function onImageLoad(
+  canvasHelper: HTMLDivElement,
+  canvasParent: HTMLDivElement,
+  paperConfig: paperUtils.IPaperConfig,
+  imageElem: HTMLImageElement,
+  cols: number,
+  rows: number
+): void {
+  const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
+  const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
+  const { width: canvasDrawWidth, height: canvasDrawHeight } = getCanvasDrawSizes({
+    ...canvasPxSizes,
+    margin: marginInPixels,
+  });
+  const imageDrawWidth = (canvasDrawWidth * imageElem.naturalWidth) / imageElem.width;
+  const imageDrawHeight = canvasDrawHeight * (imageElem.naturalHeight / imageElem.height);
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const canvasPage = document.createElement("canvas");
+      canvasPage.width = canvasPxSizes.width;
+      canvasPage.height = canvasPxSizes.height;
+      canvasPage.style.width = `${paperConfig.width}${paperConfig.unit}`;
+      canvasPage.style.height = `${paperConfig.height}${paperConfig.unit}`;
+      canvasParent.appendChild(canvasPage);
+      const context = canvasPage.getContext("2d");
+      if (context) {
+        context.drawImage(
+          imageElem,
+          imageDrawWidth * col,
+          imageDrawHeight * row,
+          imageDrawWidth,
+          imageDrawHeight,
+          marginInPixels.left,
+          marginInPixels.top,
+          canvasDrawWidth,
+          canvasDrawHeight
+        );
+      }
+    }
+  }
+  imageElem.hidden = true;
+  canvasHelper.hidden = true;
+}
+
 const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
-  const divRef: MutableRefObject<null | HTMLDivElement> = useRef(null);
+  const canvasParentRef: MutableRefObject<null | HTMLDivElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
   useEffect(() => {
     const { cols, rows } = getCanvasPages(imageConfig, paperConfig);
     const imageElem = imageRef.current!;
-    const divElem = divRef.current!;
+    const canvasParentElem = canvasParentRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {
-      const canvasPageWidth = canvasSizingHelperElem.offsetWidth;
-      const canvasPageHeight = canvasSizingHelperElem.offsetHeight;
-      const marginsInPixels = {
-        top: (paperConfig.margin.top / paperConfig.height) * canvasPageHeight,
-        right: (paperConfig.margin.right / paperConfig.width) * canvasPageWidth,
-        bottom: (paperConfig.margin.bottom / paperConfig.height) * canvasPageHeight,
-        left: (paperConfig.margin.left / paperConfig.width) * canvasPageWidth,
-      };
-      const canvasDrawWidth = canvasPageWidth - (marginsInPixels.left + marginsInPixels.right);
-      const canvasDrawHeight = canvasPageHeight - (marginsInPixels.top + marginsInPixels.bottom);
-      const imageDrawWidth = (canvasDrawWidth * imageElem.naturalWidth) / imageElem.width;
-      const imageDrawHeight = canvasDrawHeight * (imageElem.naturalHeight / imageElem.height);
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          const canvasPage = document.createElement("canvas");
-          canvasPage.width = canvasPageWidth;
-          canvasPage.height = canvasPageHeight;
-          canvasPage.style.width = `${paperConfig.width}${paperConfig.unit}`;
-          canvasPage.style.height = `${paperConfig.height}${paperConfig.unit}`;
-          divElem.appendChild(canvasPage);
-          const context = canvasPage.getContext("2d");
-          if (context) {
-            context.drawImage(
-              imageElem,
-              imageDrawWidth * col,
-              imageDrawHeight * row,
-              imageDrawWidth,
-              imageDrawHeight,
-              marginsInPixels.left,
-              marginsInPixels.top,
-              canvasDrawWidth,
-              canvasDrawHeight
-            );
-          }
-        }
-      }
-      imageElem.hidden = true;
-      canvasSizingHelperElem.hidden = true;
+      onImageLoad(canvasSizingHelperElem, canvasParentElem, paperConfig, imageElem, cols, rows);
     };
     imageElem.src = imageConfig.source;
-  }, [imageConfig, paperConfig, divRef, imageRef]);
+  }, [imageConfig, paperConfig]);
   return (
     <>
       <div
@@ -127,7 +157,7 @@ const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
-      <div ref={divRef} id="print-splitter" style={{ border: "1px solid black" }}></div>
+      <div ref={canvasParentRef} id="print-splitter" style={{ border: "1px solid black" }}></div>
     </>
   );
 };
