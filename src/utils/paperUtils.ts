@@ -1,4 +1,5 @@
-export type paperUnit = "mm" | "cm" | "in";
+import { IPaperConfig, IPaperMargin, PaperUnit } from "./interfaces-n-types";
+
 const unitRelations = {
   mm: {
     mm: 1,
@@ -21,7 +22,7 @@ export class PaperConfig implements IPaperConfig {
   public readonly margin: IPaperMargin;
 
   constructor(
-    public readonly unit: paperUnit,
+    public readonly unit: PaperUnit,
     public readonly width: number,
     public readonly height: number,
     margin?: IPaperMargin
@@ -43,20 +44,6 @@ export class PaperConfig implements IPaperConfig {
   }
 }
 
-export interface IPaperMargin {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
-
-export interface IPaperConfig {
-  unit: paperUnit;
-  width: number;
-  height: number;
-  margin: IPaperMargin;
-}
-
 export const DefaultSizes = {
   a4: new PaperConfig("mm", 210, 297),
   a3: new PaperConfig("mm", 297, 420),
@@ -66,6 +53,6 @@ export const DefaultSizes = {
   tabloid: new PaperConfig("in", 11, 17),
 };
 
-export function changeUnit(number: number, numberUnit: paperUnit, toUnit: paperUnit) {
+export function changeUnit(number: number, numberUnit: PaperUnit, toUnit: PaperUnit) {
   return number * unitRelations[numberUnit][toUnit];
 }

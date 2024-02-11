@@ -1,5 +1,5 @@
 import * as paperUtils from "../../utils/paperUtils";
-import * as imageUtils from "../../utils/imageConfig";
+import { IImageConfig, IPaperConfig, IPaperMargin } from "../../utils/interfaces-n-types";
 import {
   Dispatch,
   MutableRefObject,
@@ -10,11 +10,11 @@ import {
   useState,
 } from "react";
 import CanvasPage from "../CanvasPage/CanvasPage";
-import { IWidthAndHeight } from "../../utils/interfaces";
+import { IWidthAndHeight } from "../../utils/interfaces-n-types";
 
 function getImageSizesInPaperUnits(
-  imageConfig: imageUtils.IImageConfig,
-  paperConfig: paperUtils.IPaperConfig
+  imageConfig: IImageConfig,
+  paperConfig: IPaperConfig
 ): IWidthAndHeight {
   const imageWidthInPaperUnits = paperUtils.changeUnit(
     imageConfig.width,
@@ -42,8 +42,8 @@ function getCanvasColsCount(paperWidthWithoutMargin: number, imageWidth: number)
 }
 
 function getCanvasPages(
-  imageConfig: imageUtils.IImageConfig,
-  paperConfig: paperUtils.IPaperConfig
+  imageConfig: IImageConfig,
+  paperConfig: IPaperConfig
 ): { rows: number; cols: number } {
   const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
     getImageSizesInPaperUnits(imageConfig, paperConfig);
@@ -53,18 +53,18 @@ function getCanvasPages(
   return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
-function getCanvasDrawWidth(height: number, margin: paperUtils.IPaperMargin): number {
+function getCanvasDrawWidth(height: number, margin: IPaperMargin): number {
   return height - (margin.left + margin.right);
 }
 
-function getCanvasDrawHeight(width: number, margin: paperUtils.IPaperMargin): number {
+function getCanvasDrawHeight(width: number, margin: IPaperMargin): number {
   return width - (margin.top + margin.bottom);
 }
 
 function getCanvasDrawSizes(canvasConfig: {
   width: number;
   height: number;
-  margin: paperUtils.IPaperMargin;
+  margin: IPaperMargin;
 }): IWidthAndHeight {
   return {
     width: getCanvasDrawWidth(canvasConfig.width, canvasConfig.margin),
@@ -76,10 +76,7 @@ function extractCanvasPxSizes(sourceElem: HTMLDivElement): IWidthAndHeight {
   return { width: sourceElem.offsetWidth, height: sourceElem.offsetHeight };
 }
 
-function getMarginInPx(
-  paperConfig: paperUtils.IPaperConfig,
-  canvasPxSizes: IWidthAndHeight
-): paperUtils.IPaperMargin {
+function getMarginInPx(paperConfig: IPaperConfig, canvasPxSizes: IWidthAndHeight): IPaperMargin {
   return {
     top: (paperConfig.margin.top / paperConfig.height) * canvasPxSizes.height,
     right: (paperConfig.margin.right / paperConfig.width) * canvasPxSizes.width,
@@ -100,7 +97,7 @@ function getImageDrawSizes(
 
 function onImageLoad(
   canvasHelper: HTMLDivElement,
-  paperConfig: paperUtils.IPaperConfig,
+  paperConfig: IPaperConfig,
   imageElem: HTMLImageElement,
   cols: number,
   rows: number,
@@ -174,8 +171,8 @@ const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
 };
 
 interface PrintSplitterProps {
-  imageConfig: imageUtils.IImageConfig;
-  paperConfig: paperUtils.IPaperConfig;
+  imageConfig: IImageConfig;
+  paperConfig: IPaperConfig;
 }
 
 export default PrintSplitter;

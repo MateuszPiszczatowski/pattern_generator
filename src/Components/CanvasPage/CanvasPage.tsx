@@ -1,6 +1,6 @@
 import { MutableRefObject, useEffect, useRef } from "react";
-import { IWidthAndHeight } from "../../utils/interfaces";
-import { IPaperConfig, IPaperMargin } from "../../utils/paperUtils";
+import { IWidthAndHeight } from "../../utils/interfaces-n-types";
+import { IPaperConfig, IPaperMargin } from "../../utils/interfaces-n-types";
 
 interface ICanvasPageProps {
   paperConfig: IPaperConfig;
