@@ -1,13 +1,13 @@
 import { MutableRefObject, useEffect, useRef } from "react";
 import { IWidthAndHeight } from "../../utils/interfaces-n-types";
-import { IPaperConfig, IPaperMargin } from "../../utils/interfaces-n-types";
+import { IPaperConfig, IMargin } from "../../utils/interfaces-n-types";
 
 interface ICanvasPageProps {
   paperConfig: IPaperConfig;
   imageSource: CanvasImageSource;
   imageDrawPosition: { x: number; y: number };
   imageDrawSizes: IWidthAndHeight;
-  marginInPixels: IPaperMargin;
+  marginInPixels: IMargin;
   canvasDrawSizes: IWidthAndHeight;
 }
 
@@ -20,7 +20,6 @@ export default function CanvasPage({
   canvasDrawSizes,
 }: ICanvasPageProps) {
   const canvasRef: MutableRefObject<null | HTMLCanvasElement> = useRef(null);
-  console.log("I've been here");
   useEffect(() => {
     const canvasPage = canvasRef.current!;
     canvasPage.width = canvasDrawSizes.width;

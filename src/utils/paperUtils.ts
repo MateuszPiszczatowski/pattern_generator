@@ -1,4 +1,4 @@
-import { IPaperConfig, IPaperMargin, PaperUnit } from "./interfaces-n-types";
+import { IPaperConfig, IMargin, PaperUnit } from "./interfaces-n-types";
 
 const unitRelations = {
   mm: {
@@ -19,13 +19,13 @@ const unitRelations = {
 };
 
 export class PaperConfig implements IPaperConfig {
-  public readonly margin: IPaperMargin;
+  public readonly margin: IMargin;
 
   constructor(
     public readonly unit: PaperUnit,
     public readonly width: number,
     public readonly height: number,
-    margin?: IPaperMargin
+    margin?: IMargin
   ) {
     if (margin) {
       if (margin.top + margin.bottom < height && margin.left + margin.right < width) {
@@ -34,17 +34,17 @@ export class PaperConfig implements IPaperConfig {
     } else this.margin = this.getDefaultMargin();
   }
 
-  private getDefaultMargin(): IPaperMargin {
+  private getDefaultMargin(): IMargin {
     return {
-      top: this.height * 0.05,
-      bottom: this.height * 0.05,
-      right: this.width * 0.05,
-      left: this.width * 0.05,
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0,
     };
   }
 }
 
-export const DefaultSizes = {
+export const DefaultSizes: { [key: string]: PaperConfig } = {
   a4: new PaperConfig("mm", 210, 297),
   a3: new PaperConfig("mm", 297, 420),
   a0: new PaperConfig("mm", 841, 1189),

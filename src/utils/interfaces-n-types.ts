@@ -9,7 +9,7 @@ export interface IImageConfig {
   height: number;
   unit: PaperUnit;
 }
-export interface IPaperMargin {
+export interface IMargin {
   left: number;
   top: number;
   right: number;
@@ -20,6 +20,6 @@ export interface IPaperConfig {
   unit: PaperUnit;
   width: number;
   height: number;
-  margin: IPaperMargin;
+  margin: IMargin;
 }
 export type PaperUnit = "mm" | "cm" | "in";

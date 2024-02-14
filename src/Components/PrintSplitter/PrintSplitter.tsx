@@ -1,5 +1,5 @@
 import * as paperUtils from "../../utils/paperUtils";
-import { IImageConfig, IPaperConfig, IPaperMargin } from "../../utils/interfaces-n-types";
+import { IImageConfig, IPaperConfig, IMargin } from "../../utils/interfaces-n-types";
 import {
   Dispatch,
   MutableRefObject,
@@ -53,18 +53,18 @@ function getCanvasPages(
   return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
-function getCanvasDrawWidth(height: number, margin: IPaperMargin): number {
+function getCanvasDrawWidth(height: number, margin: IMargin): number {
   return height - (margin.left + margin.right);
 }
 
-function getCanvasDrawHeight(width: number, margin: IPaperMargin): number {
+function getCanvasDrawHeight(width: number, margin: IMargin): number {
   return width - (margin.top + margin.bottom);
 }
 
 function getCanvasDrawSizes(canvasConfig: {
   width: number;
   height: number;
-  margin: IPaperMargin;
+  margin: IMargin;
 }): IWidthAndHeight {
   return {
     width: getCanvasDrawWidth(canvasConfig.width, canvasConfig.margin),
@@ -76,7 +76,7 @@ function extractCanvasPxSizes(sourceElem: HTMLDivElement): IWidthAndHeight {
   return { width: sourceElem.offsetWidth, height: sourceElem.offsetHeight };
 }
 
-function getMarginInPx(paperConfig: IPaperConfig, canvasPxSizes: IWidthAndHeight): IPaperMargin {
+function getMarginInPx(paperConfig: IPaperConfig, canvasPxSizes: IWidthAndHeight): IMargin {
   return {
     top: (paperConfig.margin.top / paperConfig.height) * canvasPxSizes.height,
     right: (paperConfig.margin.right / paperConfig.width) * canvasPxSizes.width,
@@ -130,13 +130,10 @@ function onImageLoad(
   }
 }
 
-const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
+const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
   const [pages, setPages] = useState([] as ReactNode[]);
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
-  useEffect(() => {
-    console.log(pages);
-  }, [pages]);
   useEffect(() => {
     const { cols, rows } = getCanvasPages(imageConfig, paperConfig);
     const imageElem = imageRef.current!;
@@ -147,7 +144,7 @@ const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
     imageElem.src = imageConfig.source;
   }, [imageConfig, paperConfig]);
   return (
-    <section>
+    <>
       <div
         ref={canvasSizingHelper}
         style={{
@@ -166,11 +163,11 @@ const PrintSplitter = ({ imageConfig, paperConfig }: PrintSplitterProps) => {
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
       <article style={{ border: "1px solid black" }}>{...pages}</article>
-    </section>
+    </>
   );
 };
 
-interface PrintSplitterProps {
+interface IPrintSplitterProps {
   imageConfig: IImageConfig;
   paperConfig: IPaperConfig;
 }
