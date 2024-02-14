@@ -1,25 +1,44 @@
 import * as paperUtils from "../../utils/paperUtils";
 import { IPaperConfig } from "../../utils/interfaces-n-types";
-import { ReactNode } from "react";
+import { ChangeEvent, ReactNode, useRef } from "react";
 import FormatForm from "../FormatForm/FormatForm";
+
 export default function FormatSetter({
   paperConfig,
   setPaperConfig,
   setIsModalEnabled,
   setModalChildren,
 }: IFormatSetterProps) {
+  function openCustomMarginEdit() {
+    setModalChildren([
+      <FormatForm setPaperConfig={setPaperConfig} setIsModalEnabled={setIsModalEnabled} />,
+    ]);
+    setIsModalEnabled(true);
+  }
+  const formatSelectRef = useRef(null as null | HTMLSelectElement);
+  const customMargins = (e: ChangeEvent<HTMLSelectElement>) => {
+    const option = e.currentTarget.value;
+    if (option !== "custom") {
+      setPaperConfig(paperUtils.DefaultSizes[option]);
+    } else {
+      openCustomMarginEdit();
+    }
+  };
+
   return (
     <>
       <h6>Current paper format:</h6>
       <table>
         <thead>
-          <th>Unit</th>
-          <th>Width</th>
-          <th>Height</th>
-          <th>Margin-top</th>
-          <th>Margin-right</th>
-          <th>Margin-bottom</th>
-          <th>Margin-left</th>
+          <tr>
+            <th>Unit</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Margin-top</th>
+            <th>Margin-right</th>
+            <th>Margin-bottom</th>
+            <th>Margin-left</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
@@ -34,22 +53,19 @@ export default function FormatSetter({
         </tbody>
       </table>
       <label htmlFor="paperFormat">Select paper format</label>
-      <select
-        name="paperFormat"
-        onChange={(e) => {
-          const option = e.currentTarget.value;
-          if (option !== "custom") {
-            setPaperConfig(paperUtils.DefaultSizes[option]);
-          } else {
-            setModalChildren([<FormatForm />]);
-            setIsModalEnabled(true);
-          }
-        }}>
+      <select name="paperFormat" ref={formatSelectRef} onChange={customMargins}>
         {Object.keys(paperUtils.DefaultSizes).map((key) => {
-          return <option value={key}>{key[0].toUpperCase().concat(key.slice(1))}</option>;
+          return (
+            <option value={key} key={key}>
+              {key[0].toUpperCase().concat(key.slice(1))}
+            </option>
+          );
         })}
         <option value="custom">Custom</option>
       </select>
+      {formatSelectRef.current?.value === "custom" && (
+        <button onClick={openCustomMarginEdit}>Edit</button>
+      )}
     </>
   );
 }

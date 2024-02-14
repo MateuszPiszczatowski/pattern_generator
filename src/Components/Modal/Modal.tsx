@@ -20,7 +20,7 @@ export default function FormModal({ isEnabled, setIsEnabled, tabIndex, children 
       hidden={!isEnabled}
       onClick={onClick}
       onKeyDown={onEscape}>
-      {children}
+      <div className={css.Content}>{children}</div>
     </div>
   );
 }
@@ -28,6 +28,6 @@ export default function FormModal({ isEnabled, setIsEnabled, tabIndex, children 
 interface FormModalProps {
   isEnabled: boolean;
   setIsEnabled: (visibility: boolean) => void;
-  children?: ReactNode | ReactNode[];
+  children?: ReactNode;
   tabIndex: number;
 }

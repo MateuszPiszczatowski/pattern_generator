@@ -13,7 +13,7 @@ function App() {
   const [paperConfig, setPaperConfig] = useState(paperUtils.DefaultSizes.a4 as IPaperConfig);
   const [imageConfig, setImageConfig] = useState(null as null | IImageConfig);
   const [isPrintingViewEnabled, setIsPrintingViewEnabled] = useState(false);
-  const [modalContent, setModalContent] = useState([] as ReactNode[] | ReactNode);
+  const [modalContent, setModalContent] = useState(null as ReactNode);
   const [isModalEnabled, setIsModalEnabled] = useState(false);
   return (
     <>
@@ -33,8 +33,6 @@ function App() {
           Show for printing
         </button>
       </section>
-
-      {/* Section for printing*/}
 
       <section
         onLoad={(e) => {
