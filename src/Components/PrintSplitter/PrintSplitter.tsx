@@ -29,30 +29,6 @@ function getImageSizesInPaperUnits(
   return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
 }
 
-function getCanvasRowsCount(paperHeightWithoutMargin: number, imageHeight: number): number {
-  let rowsCount = imageHeight / paperHeightWithoutMargin;
-  rowsCount = rowsCount > Math.round(rowsCount) ? Math.round(rowsCount) + 1 : Math.round(rowsCount);
-  return rowsCount;
-}
-
-function getCanvasColsCount(paperWidthWithoutMargin: number, imageWidth: number): number {
-  let colsCount = imageWidth / paperWidthWithoutMargin;
-  colsCount = colsCount > Math.round(colsCount) ? Math.round(colsCount) + 1 : Math.round(colsCount);
-  return colsCount;
-}
-
-function getCanvasPages(
-  imageConfig: IImageConfig,
-  paperConfig: IPaperConfig
-): { rows: number; cols: number } {
-  const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
-    getImageSizesInPaperUnits(imageConfig, paperConfig);
-  const { width: drawWidth, height: drawHeight } = getCanvasDrawSizes(paperConfig);
-  const pagesColsCount = getCanvasColsCount(drawWidth, imageWidthInPaperUnits);
-  const pagesRowsCount = getCanvasRowsCount(drawHeight, imageHeightInPaperUnits);
-  return { rows: pagesRowsCount, cols: pagesColsCount };
-}
-
 function getCanvasDrawWidth(height: number, margin: IMargin): number {
   return height - (margin.left + margin.right);
 }
@@ -70,6 +46,24 @@ function getCanvasDrawSizes(canvasConfig: {
     width: getCanvasDrawWidth(canvasConfig.width, canvasConfig.margin),
     height: getCanvasDrawHeight(canvasConfig.height, canvasConfig.margin),
   };
+}
+
+function getCanvasCountForOneDimension(paperDrawSize: number, imageSize: number): number {
+  const count = imageSize / paperDrawSize;
+  const roundedCount = Math.round(count);
+  return count > roundedCount ? roundedCount + 1 : roundedCount;
+}
+
+function getCanvasPagesCount(
+  imageConfig: IImageConfig,
+  paperConfig: IPaperConfig
+): { rows: number; cols: number } {
+  const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
+    getImageSizesInPaperUnits(imageConfig, paperConfig);
+  const { width: drawWidth, height: drawHeight } = getCanvasDrawSizes(paperConfig);
+  const pagesColsCount = getCanvasCountForOneDimension(drawWidth, imageWidthInPaperUnits);
+  const pagesRowsCount = getCanvasCountForOneDimension(drawHeight, imageHeightInPaperUnits);
+  return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
 function extractCanvasPxSizes(sourceElem: HTMLDivElement): IWidthAndHeight {
@@ -135,7 +129,7 @@ const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
   useEffect(() => {
-    const { cols, rows } = getCanvasPages(imageConfig, paperConfig);
+    const { cols, rows } = getCanvasPagesCount(imageConfig, paperConfig);
     const imageElem = imageRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {

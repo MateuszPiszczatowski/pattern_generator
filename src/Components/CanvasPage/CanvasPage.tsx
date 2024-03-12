@@ -22,8 +22,8 @@ export default function CanvasPage({
   const canvasRef: MutableRefObject<null | HTMLCanvasElement> = useRef(null);
   useEffect(() => {
     const canvasPage = canvasRef.current!;
-    canvasPage.width = canvasDrawSizes.width;
-    canvasPage.height = canvasDrawSizes.height;
+    canvasPage.width = canvasDrawSizes.width + marginInPixels.left + marginInPixels.right;
+    canvasPage.height = canvasDrawSizes.height + marginInPixels.top + marginInPixels.bottom;
     canvasPage.style.width = `${paperConfig.width}${paperConfig.unit}`;
     canvasPage.style.height = `${paperConfig.height}${paperConfig.unit}`;
     const context = canvasPage.getContext("2d");
@@ -48,7 +48,9 @@ export default function CanvasPage({
     imageDrawSizes.height,
     imageDrawSizes.width,
     imageSource,
+    marginInPixels.bottom,
     marginInPixels.left,
+    marginInPixels.right,
     marginInPixels.top,
     paperConfig.height,
     paperConfig.unit,
