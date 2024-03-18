@@ -1,4 +1,5 @@
 import { toRadians } from "../utils/geometry";
+import { nanoid } from "nanoid";
 const spacingSizeFactor = 0.05;
 const sizesFactor = 100;
 
@@ -17,10 +18,21 @@ export default class CircleSkirtPattern {
   private readonly fullCirclesCount;
   private readonly spacing;
   private readonly partialAngle;
-  constructor(length: number, waist: number, degrees: number) {
+  private readonly isHalved;
+  private readonly shouldRepeat;
+
+  constructor(
+    { length, waist, degrees }: { length: number; waist: number; degrees: number },
+    { isHalved, shouldRepeat }: { isHalved: boolean; shouldRepeat: boolean } = {
+      isHalved: true,
+      shouldRepeat: false,
+    }
+  ) {
     this.positionsValues.skirtLength = length * sizesFactor;
     this.positionsValues.waist = waist * sizesFactor;
     this.positionsValues.degrees = degrees;
+    this.isHalved = isHalved;
+    this.shouldRepeat = shouldRepeat;
     this.fullCirclesCount = Math.floor(degrees / 360);
     this.partialAngle = this.getPartialAngle();
     this.waistRadius = this.getWaistRadius();
@@ -28,6 +40,14 @@ export default class CircleSkirtPattern {
     this.spacing = spacingSizeFactor * this.fullRadius;
     this.width = this.calcWidth();
     this.height = this.calcHeight();
+    this.svg.setAttribute("width", `${this.width}`);
+    this.svg.setAttribute("height", `${this.height}`);
+    this.appendFullCircles();
+    this.appendPartial(
+      this.getYAxisMod(
+        this.shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount)
+      )
+    );
   }
 
   public getWidth() {
@@ -47,20 +67,23 @@ export default class CircleSkirtPattern {
   }
 
   private calcHeight() {
+    const fullCirclesCount = this.shouldRepeat
+      ? this.fullCirclesCount
+      : Math.min(this.fullCirclesCount, 1);
     return (
-      this.fullCirclesCount * this.fullRadius * 2 +
-      this.fullCirclesCount * this.spacing * 2 +
-      (this.partialAngle > 0 ? this.getPartialCircleHeight() + this.spacing * 2 : 0)
+      fullCirclesCount * this.fullRadius * (this.isHalved ? 1 : 2) +
+      fullCirclesCount * this.spacing * 2 +
+      (this.partialAngle > 0
+        ? this.getPartialCircleHeight() * (this.isHalved ? 0.5 : 1) + this.spacing * 2
+        : 0)
     );
   }
 
   private calcWidth() {
-    const angle = this.partialAngle;
+    const angle = this.partialAngle * (this.isHalved ? 0.5 : 1);
     const radius = this.fullRadius;
     if (this.fullCirclesCount > 0 || angle >= 180) return radius * 2 + this.spacing * 2;
-    if (angle <= 90) {
-      return radius + this.spacing * 2;
-    }
+    if (angle <= 90) return radius + this.spacing * 2;
     return radius + Math.cos(toRadians(360 - angle)) * radius + this.spacing * 2;
   }
 
@@ -68,8 +91,8 @@ export default class CircleSkirtPattern {
     return this.positionsValues.degrees - this.fullCirclesCount * 360;
   }
 
-  private getPartialCircleHeight(forOuterCircle = true) {
-    const radius = forOuterCircle ? this.fullRadius : this.waistRadius;
+  private getPartialCircleHeight() {
+    const radius = this.fullRadius;
     const angle = this.partialAngle;
     if (angle < 90) {
       const height = radius * Math.sin(toRadians(angle)); // the circle sector will lay horizontaly, in a way that one of the arms will be paralel to the horizontal axis, and the second arm lower. As far as I know, this should be the shortest way possible to place the object. The height is calculated using trigonometry.
@@ -96,8 +119,8 @@ export default class CircleSkirtPattern {
     return svgCircle;
   }
 
-  private getYAxisMod(counter: number, isHalved: boolean) {
-    return (2 * this.spacing + (isHalved ? 1 : 2) * this.fullRadius) * counter + this.spacing;
+  private getYAxisMod(counter: number) {
+    return (2 * this.spacing + (this.isHalved ? 1 : 2) * this.fullRadius) * counter + this.spacing;
   }
 
   private getInnerCircle(yAxisMod: number) {
@@ -218,49 +241,68 @@ export default class CircleSkirtPattern {
     return this.overOneEightyPath(angle, yAxisMod);
   }
 
+  private getHalfSignature(angle: number, yAxisMod: number) {
+    const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    const textPathElem = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+    textElem.appendChild(textPathElem);
+    const helperPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    helperPath.setAttribute("fill", "transparent");
+    helperPath.setAttribute("stroke", "transparent");
+    const height = Math.min(
+      2 * this.spacing,
+      0.3 * this.fullRadius * Math.tan(toRadians(Math.min(90, angle)))
+    ); // height is sized by putting a rectangle of 0.6 radius horizontal sides into the sector, 0.1 of the radius offset from the left border, and calculating the max length of the vertical sides, but not bigger than double the space between the circles. It ensures that the text is contained within the sector but doesn't get unreasonably high.
+    const yPoint = yAxisMod + height;
+    const xPoints = [this.spacing, this.positionsValues.skirtLength];
+    helperPath.setAttribute("d", `M${xPoints[0]} ${yPoint} L${xPoints[1]} ${yPoint}`);
+    helperPath.setAttribute("id", nanoid());
+    textElem.setAttribute("font-size", `${height}`);
+    textPathElem.textContent = "Fold in half";
+    textPathElem.setAttribute("href", "#" + helperPath.getAttribute("id")!);
+    textPathElem.setAttribute("textLength", `${this.positionsValues.skirtLength * 0.6}`);
+    textPathElem.setAttribute("startOffset", `${this.positionsValues.skirtLength * 0.1}`);
+    return [helperPath, textElem];
+  }
+
   private getCircleSectorPart(angle: number, yAxisMod: number) {
     const circleSectorPart = document.createElementNS("http://www.w3.org/2000/svg", "path");
     const path = this.pathFunctionSelectorAndCaller(angle, yAxisMod);
     circleSectorPart.setAttribute("d", path);
     this.setSvgElemFillAndStroke(circleSectorPart);
-    return circleSectorPart;
+    if (this.isHalved) {
+      const halfSignature = this.getHalfSignature(angle, yAxisMod);
+      return [...halfSignature, circleSectorPart];
+    }
+    return [circleSectorPart];
   }
 
-  private appendFullCircles(isHalved: boolean, shouldRepeat: boolean) {
+  private appendFullCircles() {
     const svg = this.svg;
-    const count = shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount);
+    const isHalved = this.isHalved;
+    const count = this.shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount);
     if (isHalved) {
       for (let i = 0; i < count; i++) {
-        svg.appendChild(this.getCircleSectorPart(180, this.getYAxisMod(i, isHalved)));
+        svg.append(...this.getCircleSectorPart(180, this.getYAxisMod(i)));
       }
     } else {
       for (let i = 0; i < count; i++) {
-        svg.appendChild(this.getInnerCircle(this.getYAxisMod(i, isHalved)));
-        svg.appendChild(this.getOuterCircle(this.getYAxisMod(i, isHalved)));
+        svg.appendChild(this.getInnerCircle(this.getYAxisMod(i)));
+        svg.appendChild(this.getOuterCircle(this.getYAxisMod(i)));
       }
     }
   }
 
-  private appendPartial(isHalved: boolean, yAxisMod: number) {
+  private appendPartial(yAxisMod: number) {
     const svg = this.svg;
     if (this.partialAngle > 0) {
-      svg.appendChild(this.getCircleSectorPart(this.partialAngle * (isHalved ? 0.5 : 1), yAxisMod));
+      svg.append(
+        ...this.getCircleSectorPart(this.partialAngle * (this.isHalved ? 0.5 : 1), yAxisMod)
+      );
     }
   }
 
-  public getDataUrl(isHalved = true, shouldRepeat = false) {
-    const svg = this.svg;
-    svg.setAttribute("width", `${this.width}`);
-    svg.setAttribute("height", `${this.height}`);
-    this.appendFullCircles(isHalved, shouldRepeat);
-    this.appendPartial(
-      isHalved,
-      this.getYAxisMod(
-        shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount),
-        isHalved
-      )
-    );
-    const svgString = new XMLSerializer().serializeToString(svg);
+  public getDataUrl() {
+    const svgString = new XMLSerializer().serializeToString(this.svg);
     const dataUrl = "data:image/svg+xml," + encodeURIComponent(svgString);
     return dataUrl;
   }

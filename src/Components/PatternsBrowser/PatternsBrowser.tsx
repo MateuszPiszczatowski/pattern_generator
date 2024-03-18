@@ -2,7 +2,11 @@ import CircleSkirtPattern from "../../SewingPatterns/CircleSkirt";
 //import testImage from "../../assets/testsingle.svg";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
-  const pattern: CircleSkirtPattern = new CircleSkirtPattern(80, 80, 780);
+  const pattern: CircleSkirtPattern = new CircleSkirtPattern({
+    waist: 80,
+    length: 80,
+    degrees: 730,
+  });
   return (
     <button
       onClick={() => {
