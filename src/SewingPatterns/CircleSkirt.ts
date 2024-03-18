@@ -115,40 +115,106 @@ export default class CircleSkirtPattern {
     );
   }
 
+  private arcPath(
+    startPointInner: number[],
+    endPointInner: number[],
+    startPointOuter: number[],
+    endPointOuter: number[],
+    isSectionOverOneEighty = false
+  ) {
+    const innerArc = `A${this.waistRadius} ${this.waistRadius} 0 ${
+      isSectionOverOneEighty ? 1 : 0
+    } ${isSectionOverOneEighty ? 1 : 0} ${endPointInner[0]} ${endPointInner[1]}`;
+    const arm = `L${startPointOuter[0]} ${startPointOuter[1]}`;
+    const outerArc = `A${this.fullRadius} ${this.fullRadius} 0 ${isSectionOverOneEighty ? 1 : 0} ${
+      isSectionOverOneEighty ? 0 : 1
+    } ${endPointOuter[0]} ${endPointOuter[1]}`;
+    return `M${startPointInner[0]} ${startPointInner[1]} ${innerArc} ${arm} ${outerArc} Z`;
+  }
+
   private underNinetyPath() {
-    console.log(this);
+    console.log("<ninety");
     const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
     const angle = this.partialAngle;
-    const endPointOuter = [this.spacing, yAxisMod];
-    const startPointOuter = [
-      this.fullRadius - Math.cos(toRadians(angle)) * this.fullRadius + this.spacing,
-      Math.sin(toRadians(angle)) * this.fullRadius + yAxisMod,
-    ];
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [
       this.fullRadius - Math.cos(toRadians(angle)) * this.waistRadius + this.spacing,
       Math.sin(toRadians(angle)) * this.waistRadius + yAxisMod,
     ];
-    const innerArc = `A${this.waistRadius} ${this.waistRadius} 0 0 0 ${endPointInner[0]} ${endPointInner[1]}`;
-    const arm = `L${startPointOuter[0]} ${startPointOuter[1]}`;
-    const outerArc = `A${this.fullRadius} ${this.fullRadius} 0 0 1 ${endPointOuter[0]} ${endPointOuter[1]}`;
-    return `M${startPointInner[0]} ${startPointInner[1]} ${innerArc} ${arm} ${outerArc} Z`;
+    const startPointOuter = [
+      this.fullRadius - Math.cos(toRadians(angle)) * this.fullRadius + this.spacing,
+      Math.sin(toRadians(angle)) * this.fullRadius + yAxisMod,
+    ];
+    const endPointOuter = [this.spacing, yAxisMod];
+    return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
   private ninetyPath() {
-    return "";
+    console.log("ninety");
+    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+    const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
+    const endPointInner = [this.fullRadius + this.spacing, this.waistRadius + yAxisMod];
+    const startPointOuter = [this.fullRadius + this.spacing, this.fullRadius + yAxisMod];
+    const endPointOuter = [this.spacing, yAxisMod];
+    return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
   private ninetyToOneEightyPath() {
-    return "";
+    console.log("ninety<a<oneEighty");
+    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+    const angle = this.partialAngle;
+    console.log("angle");
+    console.log(angle);
+    const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
+    const endPointInner = [
+      this.fullRadius + Math.cos(toRadians(180 - angle)) * this.waistRadius + this.spacing,
+      Math.sin(toRadians(180 - angle)) * this.waistRadius + yAxisMod,
+    ];
+    console.log(Math.sin(toRadians(180 - angle)));
+    const startPointOuter = [
+      this.fullRadius + Math.cos(toRadians(180 - angle)) * this.fullRadius + this.spacing,
+      Math.sin(toRadians(180 - angle)) * this.fullRadius + yAxisMod,
+    ];
+    const endPointOuter = [this.spacing, yAxisMod];
+    return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
   private oneEightyPath() {
-    return "";
+    console.log("oneEighty");
+    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+    const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
+    const endPointInner = [this.fullRadius + this.spacing + this.waistRadius, yAxisMod];
+    const startPointOuter = [2 * this.fullRadius + this.spacing, yAxisMod];
+    const endPointOuter = [this.spacing, yAxisMod];
+    return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
   private overOneEightyPath() {
-    return "";
+    console.log(">oneEighty");
+    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+    const angle = this.partialAngle;
+    const innerYCoord =
+      Math.cos(toRadians((360 - angle) / 2)) * this.waistRadius + yAxisMod + this.fullRadius;
+    const startPointInner = [
+      this.fullRadius - Math.sin(toRadians((360 - angle) / 2)) * this.waistRadius + this.spacing,
+      innerYCoord,
+    ];
+    const endPointInner = [
+      this.fullRadius + Math.sin(toRadians((360 - angle) / 2)) * this.waistRadius + this.spacing,
+      innerYCoord,
+    ];
+
+    const outerYCoord =
+      Math.cos(toRadians((360 - angle) / 2)) * this.fullRadius + yAxisMod + this.fullRadius;
+    const startPointOuter = [
+      this.fullRadius + Math.sin(toRadians((360 - angle) / 2)) * this.fullRadius + this.spacing,
+      outerYCoord,
+    ];
+    const endPointOuter = [
+      this.fullRadius - Math.sin(toRadians((360 - angle) / 2)) * this.fullRadius + this.spacing,
+      outerYCoord,
+    ];
+    return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter, true);
   }
 
   private pathFunctionSelectorAndCaller() {
