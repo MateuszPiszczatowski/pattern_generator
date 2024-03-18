@@ -9,6 +9,7 @@ export default class CircleSkirtPattern {
     waist: 0,
     degrees: 0,
   };
+  private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   private readonly waistRadius;
   private readonly fullRadius;
   private readonly width;
@@ -95,22 +96,22 @@ export default class CircleSkirtPattern {
     return svgCircle;
   }
 
-  private getYAxisMod(counter: number) {
-    return 2 * (this.spacing + this.fullRadius) * counter + this.spacing;
+  private getYAxisMod(counter: number, isHalved: boolean) {
+    return (2 * this.spacing + (isHalved ? 1 : 2) * this.fullRadius) * counter + this.spacing;
   }
 
-  private getInnerCircle(counter: number) {
+  private getInnerCircle(yAxisMod: number) {
     return this.getSvgCircle(
       this.fullRadius + this.spacing,
-      this.fullRadius + this.getYAxisMod(counter),
+      this.fullRadius + yAxisMod,
       this.waistRadius
     );
   }
 
-  private getOuterCircle(counter: number) {
+  private getOuterCircle(yAxisMod: number) {
     return this.getSvgCircle(
       this.fullRadius + this.spacing,
-      this.fullRadius + this.getYAxisMod(counter),
+      this.fullRadius + yAxisMod,
       this.fullRadius
     );
   }
@@ -132,10 +133,7 @@ export default class CircleSkirtPattern {
     return `M${startPointInner[0]} ${startPointInner[1]} ${innerArc} ${arm} ${outerArc} Z`;
   }
 
-  private underNinetyPath() {
-    console.log("<ninety");
-    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
-    const angle = this.partialAngle;
+  private underNinetyPath(angle: number, yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [
       this.fullRadius - Math.cos(toRadians(angle)) * this.waistRadius + this.spacing,
@@ -149,9 +147,7 @@ export default class CircleSkirtPattern {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  private ninetyPath() {
-    console.log("ninety");
-    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+  private ninetyPath(yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [this.fullRadius + this.spacing, this.waistRadius + yAxisMod];
     const startPointOuter = [this.fullRadius + this.spacing, this.fullRadius + yAxisMod];
@@ -159,18 +155,12 @@ export default class CircleSkirtPattern {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  private ninetyToOneEightyPath() {
-    console.log("ninety<a<oneEighty");
-    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
-    const angle = this.partialAngle;
-    console.log("angle");
-    console.log(angle);
+  private ninetyToOneEightyPath(angle: number, yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [
       this.fullRadius + Math.cos(toRadians(180 - angle)) * this.waistRadius + this.spacing,
       Math.sin(toRadians(180 - angle)) * this.waistRadius + yAxisMod,
     ];
-    console.log(Math.sin(toRadians(180 - angle)));
     const startPointOuter = [
       this.fullRadius + Math.cos(toRadians(180 - angle)) * this.fullRadius + this.spacing,
       Math.sin(toRadians(180 - angle)) * this.fullRadius + yAxisMod,
@@ -179,9 +169,7 @@ export default class CircleSkirtPattern {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  private oneEightyPath() {
-    console.log("oneEighty");
-    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
+  private oneEightyPath(yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [this.fullRadius + this.spacing + this.waistRadius, yAxisMod];
     const startPointOuter = [2 * this.fullRadius + this.spacing, yAxisMod];
@@ -189,10 +177,7 @@ export default class CircleSkirtPattern {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  private overOneEightyPath() {
-    console.log(">oneEighty");
-    const yAxisMod = this.getYAxisMod(this.fullCirclesCount);
-    const angle = this.partialAngle;
+  private overOneEightyPath(angle: number, yAxisMod: number) {
     const innerYCoord =
       Math.cos(toRadians((360 - angle) / 2)) * this.waistRadius + yAxisMod + this.fullRadius;
     const startPointInner = [
@@ -217,40 +202,64 @@ export default class CircleSkirtPattern {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter, true);
   }
 
-  private pathFunctionSelectorAndCaller() {
-    const angle = this.partialAngle;
+  private pathFunctionSelectorAndCaller(angle: number, yAxisMod: number) {
     if (angle < 90) {
-      return this.underNinetyPath();
+      return this.underNinetyPath(angle, yAxisMod);
     }
     if (angle === 90) {
-      return this.ninetyPath();
+      return this.ninetyPath(yAxisMod);
     }
     if (angle < 180) {
-      return this.ninetyToOneEightyPath();
+      return this.ninetyToOneEightyPath(angle, yAxisMod);
     }
     if (angle === 180) {
-      return this.oneEightyPath();
+      return this.oneEightyPath(yAxisMod);
     }
-    return this.overOneEightyPath();
+    return this.overOneEightyPath(angle, yAxisMod);
   }
 
-  private getCircleSectorPart() {
+  private getCircleSectorPart(angle: number, yAxisMod: number) {
     const circleSectorPart = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    const path = this.pathFunctionSelectorAndCaller();
+    const path = this.pathFunctionSelectorAndCaller(angle, yAxisMod);
     circleSectorPart.setAttribute("d", path);
     this.setSvgElemFillAndStroke(circleSectorPart);
     return circleSectorPart;
   }
 
-  public getDataUrl() {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  private appendFullCircles(isHalved: boolean, shouldRepeat: boolean) {
+    const svg = this.svg;
+    const count = shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount);
+    if (isHalved) {
+      for (let i = 0; i < count; i++) {
+        svg.appendChild(this.getCircleSectorPart(180, this.getYAxisMod(i, isHalved)));
+      }
+    } else {
+      for (let i = 0; i < count; i++) {
+        svg.appendChild(this.getInnerCircle(this.getYAxisMod(i, isHalved)));
+        svg.appendChild(this.getOuterCircle(this.getYAxisMod(i, isHalved)));
+      }
+    }
+  }
+
+  private appendPartial(isHalved: boolean, yAxisMod: number) {
+    const svg = this.svg;
+    if (this.partialAngle > 0) {
+      svg.appendChild(this.getCircleSectorPart(this.partialAngle * (isHalved ? 0.5 : 1), yAxisMod));
+    }
+  }
+
+  public getDataUrl(isHalved = true, shouldRepeat = false) {
+    const svg = this.svg;
     svg.setAttribute("width", `${this.width}`);
     svg.setAttribute("height", `${this.height}`);
-    for (let i = 0; i < this.fullCirclesCount; i++) {
-      svg.appendChild(this.getInnerCircle(i));
-      svg.appendChild(this.getOuterCircle(i));
-    }
-    svg.appendChild(this.getCircleSectorPart());
+    this.appendFullCircles(isHalved, shouldRepeat);
+    this.appendPartial(
+      isHalved,
+      this.getYAxisMod(
+        shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount),
+        isHalved
+      )
+    );
     const svgString = new XMLSerializer().serializeToString(svg);
     const dataUrl = "data:image/svg+xml," + encodeURIComponent(svgString);
     return dataUrl;
