@@ -73,9 +73,7 @@ export default class CircleSkirtPattern {
     return (
       fullCirclesCount * this.fullRadius * (this.isHalved ? 1 : 2) +
       fullCirclesCount * this.spacing * 2 +
-      (this.partialAngle > 0
-        ? this.getPartialCircleHeight() * (this.isHalved ? 0.5 : 1) + this.spacing * 2
-        : 0)
+      (this.partialAngle > 0 ? this.getPartialCircleHeight() + this.spacing * 2 : 0)
     );
   }
 
@@ -91,9 +89,9 @@ export default class CircleSkirtPattern {
     return this.positionsValues.degrees - this.fullCirclesCount * 360;
   }
 
-  private getPartialCircleHeight() {
+  private getPartialCircleHeight(considerHalving = true) {
     const radius = this.fullRadius;
-    const angle = this.partialAngle;
+    const angle = this.partialAngle * (considerHalving && this.isHalved ? 0.5 : 1);
     if (angle < 90) {
       const height = radius * Math.sin(toRadians(angle)); // the circle sector will lay horizontaly, in a way that one of the arms will be paralel to the horizontal axis, and the second arm lower. As far as I know, this should be the shortest way possible to place the object. The height is calculated using trigonometry.
       return height;
@@ -107,7 +105,7 @@ export default class CircleSkirtPattern {
   private setSvgElemFillAndStroke(elem: SVGElement) {
     elem.setAttribute("fill", "transparent");
     elem.setAttribute("stroke", "black");
-    elem.setAttribute("stroke-width", `${0.02 * this.waistRadius}`);
+    elem.setAttribute("stroke-width", `${0.001 * this.width}`);
   }
 
   private getSvgCircle(x: number, y: number, radius: number) {
@@ -276,6 +274,15 @@ export default class CircleSkirtPattern {
     return [circleSectorPart];
   }
 
+  private getMultiplicatorSign() {
+    const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textElem.textContent = `${this.fullCirclesCount}x`;
+    textElem.setAttribute("font-size", `${this.fullRadius / 3}`);
+    textElem.setAttribute("x", `${this.fullRadius - this.spacing * 2}`);
+    textElem.setAttribute("y", `${this.getYAxisMod(1) * 0.55}`);
+    return textElem;
+  }
+
   private appendFullCircles() {
     const svg = this.svg;
     const isHalved = this.isHalved;
@@ -284,10 +291,16 @@ export default class CircleSkirtPattern {
       for (let i = 0; i < count; i++) {
         svg.append(...this.getCircleSectorPart(180, this.getYAxisMod(i)));
       }
+      if (!this.shouldRepeat && this.fullCirclesCount > 1) {
+        svg.appendChild(this.getMultiplicatorSign());
+      }
     } else {
       for (let i = 0; i < count; i++) {
         svg.appendChild(this.getInnerCircle(this.getYAxisMod(i)));
         svg.appendChild(this.getOuterCircle(this.getYAxisMod(i)));
+      }
+      if (!this.shouldRepeat && this.fullCirclesCount > 1) {
+        svg.appendChild(this.getMultiplicatorSign());
       }
     }
   }

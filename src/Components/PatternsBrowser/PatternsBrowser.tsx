@@ -5,7 +5,7 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
   const pattern: CircleSkirtPattern = new CircleSkirtPattern({
     waist: 80,
     length: 80,
-    degrees: 730,
+    degrees: 780,
   });
   return (
     <button
