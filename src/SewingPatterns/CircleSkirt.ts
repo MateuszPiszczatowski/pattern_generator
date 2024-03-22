@@ -20,14 +20,20 @@ export default class CircleSkirtPattern {
   private readonly partialAngle;
   private readonly isHalved;
   private readonly shouldRepeat;
-
+  private readonly lineWidth;
   constructor(
-    { length, waist, degrees }: { length: number; waist: number; degrees: number },
+    {
+      length,
+      waist,
+      degrees,
+      lineWidth,
+    }: { length: number; waist: number; degrees: number; lineWidth: number },
     { isHalved, shouldRepeat }: { isHalved: boolean; shouldRepeat: boolean } = {
       isHalved: true,
       shouldRepeat: false,
     }
   ) {
+    this.lineWidth = lineWidth;
     this.positionsValues.skirtLength = length * sizesFactor;
     this.positionsValues.waist = waist * sizesFactor;
     this.positionsValues.degrees = degrees;
@@ -105,7 +111,7 @@ export default class CircleSkirtPattern {
   private setSvgElemFillAndStroke(elem: SVGElement) {
     elem.setAttribute("fill", "transparent");
     elem.setAttribute("stroke", "black");
-    elem.setAttribute("stroke-width", `${0.001 * this.width}`);
+    elem.setAttribute("stroke-width", `${this.lineWidth * sizesFactor}`);
   }
 
   private getSvgCircle(x: number, y: number, radius: number) {

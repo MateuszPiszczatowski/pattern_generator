@@ -6,6 +6,7 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
     waist: 80,
     length: 80,
     degrees: 780,
+    lineWidth: 0.1,
   });
   return (
     <button
@@ -13,7 +14,7 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
         setImageConfig({
           height: pattern.getHeight(),
           width: pattern.getWidth(),
-          unit: "mm",
+          unit: "cm",
           source: pattern.getDataUrl(),
         });
         setPattern("Test");
