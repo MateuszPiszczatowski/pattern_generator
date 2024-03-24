@@ -1,7 +1,9 @@
 import CircleSkirtPattern from "../../SewingPatterns/CircleSkirt";
 import CircleSkirtConfigurator from "../../SewingPatternsConfigurators/CircleSkirtConfigurator";
+import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
 //import testImage from "../../assets/testsingle.svg";
 import { IImageConfig } from "../../utils/interfaces-n-types";
+import PatternOption from "../PatternOption/PatternOption";
 export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
   const patternConfig = new CircleSkirtConfigurator();
   patternConfig.setPosition("waist", 80);
@@ -13,18 +15,23 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
 
   const pattern: CircleSkirtPattern = patternConfig.getPattern();
   return (
-    <button
-      onClick={() => {
-        setImageConfig({
-          height: pattern.getHeight(),
-          width: pattern.getWidth(),
-          unit: "cm",
-          source: pattern.getDataUrl(),
-        });
-        setPattern("Test");
-      }}>
-      Set to default
-    </button>
+    <div>
+      {...patternsConfiguratorsList.map((configurator) => (
+        <PatternOption patternConfigurator={configurator} />
+      ))}
+      <button
+        onClick={() => {
+          setImageConfig({
+            height: pattern.getHeight(),
+            width: pattern.getWidth(),
+            unit: "cm",
+            source: pattern.getDataUrl(),
+          });
+          setPattern("Test");
+        }}>
+        Set to default
+      </button>
+    </div>
   );
 }
 

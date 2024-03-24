@@ -1,5 +1,7 @@
 import { IPatternConfigurator, ISewingPatter } from "../utils/interfaces-n-types";
 export default abstract class BaseConfigurator implements IPatternConfigurator {
+  public abstract readonly title: string;
+  public abstract readonly picture: string;
   public abstract readonly positions: string[];
   public abstract readonly selects: string[];
   public abstract getPattern(): ISewingPatter;
@@ -9,12 +11,12 @@ export default abstract class BaseConfigurator implements IPatternConfigurator {
   public setPosition(name: string, value: number) {
     if (this.positions.includes(name)) {
       this.positionsValues[name] = value;
-    } else throw new Error(`position ${name} not present in the positions array`);
+    } else throw new Error(`position ${name} is not present in the positions array`);
   }
   public setSelect(name: string, value: boolean) {
     if (this.selects.includes(name)) {
       this.selectsValues[name] = value;
-    } else throw new Error(`select ${name} not present in the positions array`);
+    } else throw new Error(`select ${name} is not present in the positions array`);
   }
   private lackingElems(elemArray: string[], searchedObject: { [key: string]: number | boolean }) {
     const lacking: string[] = [];

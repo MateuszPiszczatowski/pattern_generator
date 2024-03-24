@@ -1,7 +1,9 @@
 import CircleSkirtPattern from "../SewingPatterns/CircleSkirt";
 import BaseConfigurator from "./baseConfigurator";
-
+import picture from "../assets/testsingle.svg";
 export default class CircleSkirtConfigurator extends BaseConfigurator {
+  public readonly title = "Circle Skirt";
+  public readonly picture = picture;
   public readonly positions = ["skirtLength", "waist", "degrees", "lineWidth"];
   public readonly selects = ["isHalved", "shouldRepeat"];
   getPattern() {

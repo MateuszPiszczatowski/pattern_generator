@@ -31,6 +31,8 @@ export interface ISewingPatter {
 }
 
 export interface IPatternConfigurator {
+  title: string;
+  picture: string;
   positions: string[];
   selects: string[];
   setPosition: (name: string, value: number) => void;
