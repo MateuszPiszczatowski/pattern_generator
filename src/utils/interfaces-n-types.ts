@@ -23,3 +23,18 @@ export interface IPaperConfig {
   margin: IMargin;
 }
 export type PaperUnit = "mm" | "cm" | "in";
+
+export interface ISewingPatter {
+  getWidth: () => number;
+  getHeight: () => number;
+  getDataUrl: () => string;
+}
+
+export interface IPatternConfigurator {
+  positions: string[];
+  selects: string[];
+  setPosition: (name: string, value: number) => void;
+  setSelect: (name: string, value: boolean) => void;
+  isReady: () => boolean;
+  getPattern: () => ISewingPatter;
+}

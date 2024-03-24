@@ -1,15 +1,13 @@
 import { toRadians } from "../utils/geometry";
 import { nanoid } from "nanoid";
+import { ISewingPatter } from "../utils/interfaces-n-types";
 const spacingSizeFactor = 0.05;
 const sizesFactor = 100;
 
-export default class CircleSkirtPattern {
-  positions = ["length", "waist", "degrees"];
-  private positionsValues = {
-    skirtLength: 0,
-    waist: 0,
-    degrees: 0,
-  };
+export default class CircleSkirtPattern implements ISewingPatter {
+  private readonly skirtLength;
+  private readonly waist;
+  private readonly degrees;
   private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   private readonly waistRadius;
   private readonly fullRadius;
@@ -23,26 +21,26 @@ export default class CircleSkirtPattern {
   private readonly lineWidth;
   constructor(
     {
-      length,
+      skirtLength,
       waist,
       degrees,
       lineWidth,
-    }: { length: number; waist: number; degrees: number; lineWidth: number },
+    }: { skirtLength: number; waist: number; degrees: number; lineWidth: number },
     { isHalved, shouldRepeat }: { isHalved: boolean; shouldRepeat: boolean } = {
       isHalved: true,
       shouldRepeat: false,
     }
   ) {
     this.lineWidth = lineWidth;
-    this.positionsValues.skirtLength = length * sizesFactor;
-    this.positionsValues.waist = waist * sizesFactor;
-    this.positionsValues.degrees = degrees;
+    this.skirtLength = skirtLength * sizesFactor;
+    this.waist = waist * sizesFactor;
+    this.degrees = degrees;
     this.isHalved = isHalved;
     this.shouldRepeat = shouldRepeat;
     this.fullCirclesCount = Math.floor(degrees / 360);
     this.partialAngle = this.getPartialAngle();
     this.waistRadius = this.getWaistRadius();
-    this.fullRadius = this.waistRadius + this.positionsValues.skirtLength;
+    this.fullRadius = this.waistRadius + this.skirtLength;
     this.spacing = spacingSizeFactor * this.fullRadius;
     this.width = this.calcWidth();
     this.height = this.calcHeight();
@@ -65,7 +63,7 @@ export default class CircleSkirtPattern {
 
   private getWaistRadius() {
     return (
-      this.positionsValues.waist /
+      this.waist /
       (this.fullCirclesCount + (this.partialAngle > 0 ? this.partialAngle / 360 : 0)) /
       2 /
       Math.PI
@@ -92,7 +90,7 @@ export default class CircleSkirtPattern {
   }
 
   private getPartialAngle() {
-    return this.positionsValues.degrees - this.fullCirclesCount * 360;
+    return this.degrees - this.fullCirclesCount * 360;
   }
 
   private getPartialCircleHeight(considerHalving = true) {
@@ -257,14 +255,14 @@ export default class CircleSkirtPattern {
       0.3 * this.fullRadius * Math.tan(toRadians(Math.min(90, angle)))
     ); // height is sized by putting a rectangle of 0.6 radius horizontal sides into the sector, 0.1 of the radius offset from the left border, and calculating the max length of the vertical sides, but not bigger than double the space between the circles. It ensures that the text is contained within the sector but doesn't get unreasonably high.
     const yPoint = yAxisMod + height;
-    const xPoints = [this.spacing, this.positionsValues.skirtLength];
+    const xPoints = [this.spacing, this.skirtLength];
     helperPath.setAttribute("d", `M${xPoints[0]} ${yPoint} L${xPoints[1]} ${yPoint}`);
     helperPath.setAttribute("id", nanoid());
     textElem.setAttribute("font-size", `${height}`);
     textPathElem.textContent = "Fold in half";
     textPathElem.setAttribute("href", "#" + helperPath.getAttribute("id")!);
-    textPathElem.setAttribute("textLength", `${this.positionsValues.skirtLength * 0.6}`);
-    textPathElem.setAttribute("startOffset", `${this.positionsValues.skirtLength * 0.1}`);
+    textPathElem.setAttribute("textLength", `${this.skirtLength * 0.6}`);
+    textPathElem.setAttribute("startOffset", `${this.skirtLength * 0.1}`);
     return [helperPath, textElem];
   }
 

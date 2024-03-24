@@ -1,13 +1,17 @@
 import CircleSkirtPattern from "../../SewingPatterns/CircleSkirt";
+import CircleSkirtConfigurator from "../../SewingPatternsConfigurators/CircleSkirtConfigurator";
 //import testImage from "../../assets/testsingle.svg";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
-  const pattern: CircleSkirtPattern = new CircleSkirtPattern({
-    waist: 80,
-    length: 80,
-    degrees: 780,
-    lineWidth: 0.1,
-  });
+  const patternConfig = new CircleSkirtConfigurator();
+  patternConfig.setPosition("waist", 80);
+  patternConfig.setPosition("skirtLength", 80);
+  patternConfig.setPosition("degrees", 780);
+  patternConfig.setPosition("lineWidth", 0.1);
+  patternConfig.setSelect("isHalved", true);
+  patternConfig.setSelect("shouldRepeat", false);
+
+  const pattern: CircleSkirtPattern = patternConfig.getPattern();
   return (
     <button
       onClick={() => {
