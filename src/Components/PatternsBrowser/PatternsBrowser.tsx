@@ -1,10 +1,15 @@
+import { ReactNode } from "react";
 import CircleSkirtPattern from "../../SewingPatterns/CircleSkirt";
 import CircleSkirtConfigurator from "../../SewingPatternsConfigurators/CircleSkirtConfigurator";
 import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
-//import testImage from "../../assets/testsingle.svg";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
-export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
+export default function PatternsBrowser({
+  setImageConfig,
+  setPattern,
+  setModalChildren,
+  setIsModalEnabled,
+}: IPatternsBrowserProps) {
   const patternConfig = new CircleSkirtConfigurator();
   patternConfig.setPosition("waist", 80);
   patternConfig.setPosition("skirtLength", 80);
@@ -17,7 +22,13 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
   return (
     <div>
       {...patternsConfiguratorsList.map((configurator) => (
-        <PatternOption patternConfigurator={configurator} />
+        <PatternOption
+          patternConfigurator={configurator}
+          setModalChildren={setModalChildren}
+          setIsModalEnabled={setIsModalEnabled}
+          setImageConfig={setImageConfig}
+          setPattern={setPattern}
+        />
       ))}
       <button
         onClick={() => {
@@ -38,4 +49,6 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
 interface IPatternsBrowserProps {
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
   setPattern: React.Dispatch<React.SetStateAction<string>>;
+  setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
+  setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

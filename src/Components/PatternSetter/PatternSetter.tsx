@@ -14,7 +14,12 @@ export default function PatternSetter({
       <button
         onClick={() => {
           setModalChildren([
-            <PatternsBrowser setImageConfig={setImageConfig} setPattern={setCurrentPatter} />,
+            <PatternsBrowser
+              setImageConfig={setImageConfig}
+              setPattern={setCurrentPatter}
+              setModalChildren={setModalChildren}
+              setIsModalEnabled={setIsModalEnabled}
+            />,
           ]);
           setIsModalEnabled(true);
         }}>
