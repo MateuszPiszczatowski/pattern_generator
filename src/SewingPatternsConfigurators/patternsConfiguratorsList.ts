@@ -1,6 +1,6 @@
 import CircleSkirtPattern from "../SewingPatterns/CircleSkirt";
 import CircleSkirtConfigurator from "./CircleSkirtConfigurator";
-import BaseConfigurator from "./baseConfigurator";
+import BaseConfigurator from "./BaseConfigurator";
 import picture from "../assets/testwide.svg";
 class exampleConfigurator extends BaseConfigurator {
   public readonly title = "Example Pattern";

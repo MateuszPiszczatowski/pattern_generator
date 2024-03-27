@@ -86,7 +86,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
     const radius = this.fullRadius;
     if (this.fullCirclesCount > 0 || angle >= 180) return radius * 2 + this.spacing * 2;
     if (angle <= 90) return radius + this.spacing * 2;
-    return radius + Math.cos(toRadians(360 - angle)) * radius + this.spacing * 2;
+    return radius + Math.cos(toRadians(180 - angle)) * radius + this.spacing * 2;
   }
 
   private getPartialAngle() {

@@ -35,8 +35,12 @@ export interface IPatternConfigurator {
   picture: string;
   positions: string[];
   selects: string[];
+  lackingPositions: () => string[];
+  lackingSelects: () => string[];
   setPosition: (name: string, value: number) => void;
   setSelect: (name: string, value: boolean) => void;
   isReady: () => boolean;
+  reset: () => void;
   getPattern: () => ISewingPatter;
+  getUnreadyMessages: () => string[];
 }

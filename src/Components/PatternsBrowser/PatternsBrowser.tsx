@@ -13,7 +13,7 @@ export default function PatternsBrowser({
   const patternConfig = new CircleSkirtConfigurator();
   patternConfig.setPosition("waist", 80);
   patternConfig.setPosition("skirtLength", 80);
-  patternConfig.setPosition("degrees", 780);
+  patternConfig.setPosition("degrees", 185);
   patternConfig.setPosition("lineWidth", 0.1);
   patternConfig.setSelect("isHalved", true);
   patternConfig.setSelect("shouldRepeat", false);

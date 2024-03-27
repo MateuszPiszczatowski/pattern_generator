@@ -22,7 +22,8 @@ export default abstract class BaseConfigurator implements IPatternConfigurator {
     const lacking: string[] = [];
     const present = Object.keys(searchedObject);
     elemArray.forEach((pos) => {
-      if (!(pos in present)) lacking.push(pos);
+      console.log(`if present includes ${pos} = ${present.includes(pos)}`);
+      if (!present.includes(pos)) lacking.push(pos);
     });
     return lacking;
   }
@@ -33,6 +34,29 @@ export default abstract class BaseConfigurator implements IPatternConfigurator {
     return this.lackingElems(this.selects, this.selectsValues);
   }
   public isReady() {
-    return this.lackingPositions.length === 0 && this.lackingSelects.length === 0;
+    return this.lackingPositions().length === 0 && this.lackingSelects().length === 0;
+  }
+  public getUnreadyMessages() {
+    const messages: string[] = [];
+    if (this.lackingPositions().length > 0) {
+      let lackingPositionsMessage = "There are positions, that are lacking:";
+      this.lackingPositions().forEach((position) => {
+        lackingPositionsMessage += ` ${position},`;
+      });
+      messages.push(lackingPositionsMessage);
+    }
+    if (this.lackingSelects().length > 0) {
+      let lackingSelectsMessage = "There are options, that are lacking:";
+      this.lackingSelects().forEach((select) => {
+        lackingSelectsMessage += ` ${select},`;
+      });
+      messages.push(lackingSelectsMessage);
+    }
+    return messages;
+  }
+
+  public reset() {
+    this.positions.forEach((position) => delete this.positionsValues[position]);
+    this.selects.forEach((select) => delete this.selectsValues[select]);
   }
 }

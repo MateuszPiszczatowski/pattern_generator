@@ -1,5 +1,6 @@
 import { FormEvent, useRef } from "react";
 import { IPaperConfig, PaperUnit } from "../../utils/interfaces-n-types";
+import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 
 export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IFormatFormProps) {
   const formRef = useRef(null as null | HTMLFormElement);
@@ -34,16 +35,7 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
 
   return (
     <form ref={formRef} onSubmit={onSubmit}>
-      <label htmlFor="unit">
-        Unit:{" "}
-        <select name="unit" defaultValue="cm">
-          {["in", "cm", "mm"].map((unit) => (
-            <option value={unit} key={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-      </label>
+      <LabeledUnitSelect />
       <label htmlFor="width">
         Width: <input name="width" type="number" defaultValue={10} />
       </label>
