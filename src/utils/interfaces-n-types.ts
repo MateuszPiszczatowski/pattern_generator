@@ -23,6 +23,7 @@ export interface IPaperConfig {
   margin: IMargin;
   helpingCorners: boolean;
   helpingBorders: boolean;
+  pagesCounter: boolean;
 }
 export type PaperUnit = "mm" | "cm" | "in";
 

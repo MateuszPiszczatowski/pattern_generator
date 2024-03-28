@@ -116,6 +116,7 @@ function onImageLoad(
             imageDrawPosition: { x: imageDrawSizes.width * col, y: imageDrawSizes.height * row },
             marginInPixels,
             canvasDrawSizes,
+            pageCount: row * cols + col + 1,
           }}
         />
       );

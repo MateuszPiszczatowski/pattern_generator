@@ -1,7 +1,7 @@
 import { toRadians } from "../utils/geometry";
 import { nanoid } from "nanoid";
 import { ISewingPatter } from "../utils/interfaces-n-types";
-const spacingSizeFactor = 0.05;
+const spacingSizeFactor = 0.02;
 const sizesFactor = 100;
 
 export default class CircleSkirtPattern implements ISewingPatter {

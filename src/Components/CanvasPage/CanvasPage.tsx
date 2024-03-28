@@ -9,6 +9,7 @@ interface ICanvasPageProps {
   imageDrawSizes: IWidthAndHeight;
   marginInPixels: IMargin;
   canvasDrawSizes: IWidthAndHeight;
+  pageCount: number;
 }
 
 export default function CanvasPage({
@@ -18,9 +19,14 @@ export default function CanvasPage({
   imageDrawPosition,
   marginInPixels,
   canvasDrawSizes,
+  pageCount,
 }: ICanvasPageProps) {
   const canvasRef: MutableRefObject<null | HTMLCanvasElement> = useRef(null);
   useEffect(() => {
+    function printPageNumber(canvasContext: CanvasRenderingContext2D) {
+      console.log(pageCount);
+      canvasContext;
+    }
     function printCorners(canvasContext: CanvasRenderingContext2D) {
       console.log("should print corners");
       canvasContext;
@@ -114,6 +120,9 @@ export default function CanvasPage({
       if (paperConfig.helpingCorners) {
         printCorners(context);
       }
+      if (paperConfig.pagesCounter) {
+        printPageNumber(context);
+      }
     }
   }, [
     canvasDrawSizes.height,
@@ -130,6 +139,7 @@ export default function CanvasPage({
     paperConfig.height,
     paperConfig.helpingBorders,
     paperConfig.helpingCorners,
+    paperConfig.pagesCounter,
     paperConfig.unit,
     paperConfig.width,
   ]);
