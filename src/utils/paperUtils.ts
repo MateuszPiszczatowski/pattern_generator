@@ -25,6 +25,8 @@ export class PaperConfig implements IPaperConfig {
     public readonly unit: PaperUnit,
     public readonly width: number,
     public readonly height: number,
+    public readonly helpingBorders: boolean,
+    public readonly helpingCorners: boolean,
     margin?: IMargin
   ) {
     if (margin) {
@@ -45,12 +47,12 @@ export class PaperConfig implements IPaperConfig {
 }
 
 export const DefaultSizes: { [key: string]: PaperConfig } = {
-  a4: new PaperConfig("mm", 210, 297),
-  a3: new PaperConfig("mm", 297, 420),
-  a0: new PaperConfig("mm", 841, 1189),
-  letter: new PaperConfig("in", 8.5, 11),
-  legal: new PaperConfig("in", 8.5, 14),
-  tabloid: new PaperConfig("in", 11, 17),
+  a4: new PaperConfig("mm", 210, 297, true, true),
+  a3: new PaperConfig("mm", 297, 420, true, true),
+  a0: new PaperConfig("mm", 841, 1189, true, true),
+  letter: new PaperConfig("in", 8.5, 11, true, true),
+  legal: new PaperConfig("in", 8.5, 14, true, true),
+  tabloid: new PaperConfig("in", 11, 17, true, true),
 };
 
 export function changeUnit(number: number, numberUnit: PaperUnit, toUnit: PaperUnit) {

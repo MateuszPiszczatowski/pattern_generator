@@ -21,6 +21,8 @@ export interface IPaperConfig {
   width: number;
   height: number;
   margin: IMargin;
+  helpingCorners: boolean;
+  helpingBorders: boolean;
 }
 export type PaperUnit = "mm" | "cm" | "in";
 

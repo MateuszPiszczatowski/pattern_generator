@@ -39,6 +39,12 @@ export default function CanvasPage({
         canvasDrawSizes.width,
         canvasDrawSizes.height
       );
+      if (paperConfig.helpingBorders) {
+        console.log("should print borders"); // TODO: Implement helping borders
+      }
+      if (paperConfig.helpingCorners) {
+        console.log("should print corners"); // TODO: Implement helping corners
+      }
     }
   }, [
     canvasDrawSizes.height,
@@ -53,6 +59,8 @@ export default function CanvasPage({
     marginInPixels.right,
     marginInPixels.top,
     paperConfig.height,
+    paperConfig.helpingBorders,
+    paperConfig.helpingCorners,
     paperConfig.unit,
     paperConfig.width,
   ]);

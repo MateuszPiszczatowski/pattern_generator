@@ -15,6 +15,8 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
       height: Number((values.namedItem("height") as HTMLInputElement).value),
       width: Number((values.namedItem("width") as HTMLInputElement).value),
       unit: (values.namedItem("unit") as HTMLSelectElement).value as PaperUnit,
+      helpingBorders: (values.namedItem("helpingBorders") as HTMLInputElement).checked,
+      helpingCorners: (values.namedItem("helpingCorners") as HTMLInputElement).checked,
       margin: {
         top: Number((values.namedItem("top") as HTMLInputElement).value),
         bottom: Number((values.namedItem("bottom") as HTMLInputElement).value),
@@ -42,6 +44,15 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
       <label htmlFor="height">
         Height: <input name="height" type="number" defaultValue={10} />
       </label>
+      <label>
+        Should print helping borders:
+        <input name="helpingBorders" type="checkbox" defaultChecked={true} />
+      </label>
+      <label>
+        Should print helping cornes:
+        <input name="helpingCorners" type="checkbox" defaultChecked={true} />
+      </label>
+      <label></label>
       <h6>Margins:</h6>
       <section>
         <label htmlFor="top">
