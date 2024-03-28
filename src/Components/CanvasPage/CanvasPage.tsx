@@ -21,6 +21,75 @@ export default function CanvasPage({
 }: ICanvasPageProps) {
   const canvasRef: MutableRefObject<null | HTMLCanvasElement> = useRef(null);
   useEffect(() => {
+    function printCorners(canvasContext: CanvasRenderingContext2D) {
+      console.log("should print corners");
+      canvasContext;
+    } // TODO: Implement helping corners}
+    function printBorders(canvasContext: CanvasRenderingContext2D) {
+      const width = canvasDrawSizes.width;
+      const height = canvasDrawSizes.height;
+      const blockSize = (width < height ? width : height) * 0.02;
+      canvasContext.fillStyle = "rgba(0 0 0 / 30%)";
+      canvasContext.fillRect(marginInPixels.left, marginInPixels.top, blockSize, blockSize);
+      canvasContext.fillRect(
+        marginInPixels.left + canvasDrawSizes.width - blockSize,
+        marginInPixels.top,
+        blockSize,
+        blockSize
+      );
+      canvasContext.fillRect(
+        marginInPixels.left,
+        marginInPixels.top + canvasDrawSizes.height - blockSize,
+        blockSize,
+        blockSize
+      );
+      canvasContext.fillRect(
+        marginInPixels.left + canvasDrawSizes.width - blockSize,
+        marginInPixels.top + canvasDrawSizes.height - blockSize,
+        blockSize,
+        blockSize
+      );
+      const widthRest =
+        ((width / blockSize -
+          Math.floor(width / blockSize) +
+          (Math.floor(width / blockSize) % 2 === 0 ? 1 : 0)) /
+          2) *
+        blockSize;
+      for (let i = 1; i < width / blockSize - 2; i += 2) {
+        canvasContext.fillRect(
+          widthRest + i * blockSize + marginInPixels.left,
+          marginInPixels.top,
+          blockSize,
+          blockSize
+        );
+        canvasContext.fillRect(
+          widthRest + i * blockSize + marginInPixels.left,
+          canvasDrawSizes.height + marginInPixels.top - blockSize,
+          blockSize,
+          blockSize
+        );
+      }
+      const heightRest =
+        ((height / blockSize -
+          Math.floor(height / blockSize) +
+          (Math.floor(height / blockSize) % 2 === 0 ? 1 : 0)) /
+          2) *
+        blockSize;
+      for (let i = 1; i < height / blockSize - 2; i += 2) {
+        canvasContext.fillRect(
+          marginInPixels.left,
+          heightRest + i * blockSize + marginInPixels.top,
+          blockSize,
+          blockSize
+        );
+        canvasContext.fillRect(
+          canvasDrawSizes.width + marginInPixels.left - blockSize,
+          heightRest + i * blockSize + marginInPixels.top,
+          blockSize,
+          blockSize
+        );
+      }
+    }
     const canvasPage = canvasRef.current!;
     canvasPage.width = canvasDrawSizes.width + marginInPixels.left + marginInPixels.right;
     canvasPage.height = canvasDrawSizes.height + marginInPixels.top + marginInPixels.bottom;
@@ -40,10 +109,10 @@ export default function CanvasPage({
         canvasDrawSizes.height
       );
       if (paperConfig.helpingBorders) {
-        console.log("should print borders"); // TODO: Implement helping borders
+        printBorders(context);
       }
       if (paperConfig.helpingCorners) {
-        console.log("should print corners"); // TODO: Implement helping corners
+        printCorners(context);
       }
     }
   }, [
