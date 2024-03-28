@@ -117,6 +117,12 @@ function onImageLoad(
             marginInPixels,
             canvasDrawSizes,
             pageCount: row * cols + col + 1,
+            strongBorder: {
+              isBottom: row === rows - 1,
+              isLeft: col === 0,
+              isRight: col === cols - 1,
+              isTop: row === 0,
+            },
           }}
         />
       );
