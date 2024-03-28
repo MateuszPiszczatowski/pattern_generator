@@ -14,13 +14,13 @@ export default function PatternForm({
     e.preventDefault();
     const positions: { [key: string]: number } = {};
     const selects: { [key: string]: boolean } = {};
-    patternConfigurator.positions.forEach((position) => {
+    Object.keys(patternConfigurator.positions).forEach((position) => {
       const element = e.currentTarget.elements.namedItem(position) as HTMLInputElement | null;
       if (element) {
         positions[position] = Number(element.value);
       }
     });
-    patternConfigurator.selects.forEach((select) => {
+    Object.keys(patternConfigurator.selects).forEach((select) => {
       const element = e.currentTarget.elements.namedItem(select) as HTMLInputElement | null;
       if (element) {
         selects[select] = element.checked;
@@ -41,7 +41,7 @@ export default function PatternForm({
       setIsModalEnabled(false);
       return;
     } else {
-      window.alert("".concat(...patternConfigurator.getUnreadyMessages())); // TODO generate detailed info in configurator
+      window.alert("".concat(...patternConfigurator.getUnreadyMessages()));
       console.log("".concat(...patternConfigurator.getUnreadyMessages()));
     }
     patternConfigurator.reset();
@@ -63,19 +63,29 @@ export default function PatternForm({
       </button>
       <form onSubmit={onSubmit}>
         <LabeledUnitSelect />
-        {...patternConfigurator.positions.map((position) => {
+        {...Object.keys(patternConfigurator.positions).map((position) => {
           return (
             <label htmlFor={position}>
-              {position[0].toUpperCase().concat(position.slice(1), " ")}:
-              <input type="number" min={0} name={position} />
+              {patternConfigurator.positions[position].message}:
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                defaultValue={patternConfigurator.positions[position].default}
+                name={position}
+              />
             </label>
           );
         })}
-        {...patternConfigurator.selects.map((select) => {
+        {...Object.keys(patternConfigurator.selects).map((select) => {
           return (
             <label htmlFor={select}>
-              {select}:
-              <input type="checkbox" name={select} />
+              {patternConfigurator.selects[select].message}:
+              <input
+                type="checkbox"
+                name={select}
+                defaultChecked={patternConfigurator.selects[select].default}
+              />
             </label>
           );
         })}

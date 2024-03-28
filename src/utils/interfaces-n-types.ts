@@ -33,8 +33,8 @@ export interface ISewingPatter {
 export interface IPatternConfigurator {
   title: string;
   picture: string;
-  positions: string[];
-  selects: string[];
+  positions: { [key: string]: { message: string; default: number; value?: number } };
+  selects: { [key: string]: { message: string; default: boolean; value?: boolean } };
   lackingPositions: () => string[];
   lackingSelects: () => string[];
   setPosition: (name: string, value: number) => void;

@@ -2,36 +2,36 @@ import { IPatternConfigurator, ISewingPatter } from "../utils/interfaces-n-types
 export default abstract class BaseConfigurator implements IPatternConfigurator {
   public abstract readonly title: string;
   public abstract readonly picture: string;
-  public abstract readonly positions: string[];
-  public abstract readonly selects: string[];
+  public abstract readonly positions: {
+    [key: string]: { message: string; default: number; value?: number };
+  };
+  public abstract readonly selects: {
+    [key: string]: { message: string; default: boolean; value?: boolean };
+  };
   public abstract getPattern(): ISewingPatter;
 
-  protected readonly positionsValues: { [key: string]: number } = {};
-  protected readonly selectsValues: { [key: string]: boolean } = {};
   public setPosition(name: string, value: number) {
-    if (this.positions.includes(name)) {
-      this.positionsValues[name] = value;
+    if (Object.keys(this.positions).includes(name)) {
+      this.positions[name].value = value;
     } else throw new Error(`position ${name} is not present in the positions array`);
   }
   public setSelect(name: string, value: boolean) {
-    if (this.selects.includes(name)) {
-      this.selectsValues[name] = value;
+    if (Object.keys(this.selects).includes(name)) {
+      this.selects[name].value = value;
     } else throw new Error(`select ${name} is not present in the positions array`);
   }
-  private lackingElems(elemArray: string[], searchedObject: { [key: string]: number | boolean }) {
+  private lackingElems(dictWithValues: { [key: string]: { value?: number | boolean } }) {
     const lacking: string[] = [];
-    const present = Object.keys(searchedObject);
-    elemArray.forEach((pos) => {
-      console.log(`if present includes ${pos} = ${present.includes(pos)}`);
-      if (!present.includes(pos)) lacking.push(pos);
+    Object.keys(dictWithValues).forEach((pos) => {
+      if (!("value" in dictWithValues[pos])) lacking.push(pos);
     });
     return lacking;
   }
   public lackingPositions() {
-    return this.lackingElems(this.positions, this.positionsValues);
+    return this.lackingElems(this.positions);
   }
   public lackingSelects() {
-    return this.lackingElems(this.selects, this.selectsValues);
+    return this.lackingElems(this.selects);
   }
   public isReady() {
     return this.lackingPositions().length === 0 && this.lackingSelects().length === 0;
@@ -56,7 +56,7 @@ export default abstract class BaseConfigurator implements IPatternConfigurator {
   }
 
   public reset() {
-    this.positions.forEach((position) => delete this.positionsValues[position]);
-    this.selects.forEach((select) => delete this.selectsValues[select]);
+    Object.keys(this.positions).forEach((position) => delete this.positions[position].value);
+    Object.keys(this.selects).forEach((select) => delete this.selects[select].value);
   }
 }

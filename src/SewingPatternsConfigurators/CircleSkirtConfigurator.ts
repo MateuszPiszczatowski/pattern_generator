@@ -4,26 +4,46 @@ import picture from "../assets/testsingle.svg";
 export default class CircleSkirtConfigurator extends BaseConfigurator {
   public readonly title = "Circle Skirt";
   public readonly picture = picture;
-  public readonly positions = ["skirtLength", "waist", "degrees", "lineWidth"];
-  public readonly selects = ["isHalved", "shouldRepeat"];
+  public readonly positions: {
+    [key: string]: { message: string; default: number; value?: number };
+  } = {
+    skirtLength: { message: "Length of the skirt", default: 100 },
+    waist: { message: "Waist circumference", default: 80 },
+    degrees: { message: "Circle's degrees", default: 540 },
+    lineWidth: { message: "Pattern's drawing line width", default: 0.1 },
+  };
+  public readonly selects: {
+    [key: string]: { message: string; default: boolean; value?: boolean };
+  } = {
+    isHalved: {
+      message: "Should symetric elemnts be halved?",
+      default: true,
+    },
+    shouldRepeat: {
+      message:
+        "Should print each repeating element (disable to only show how many elements should be cutted out)",
+      default: false,
+    },
+  };
+
   getPattern() {
     if (this.isReady())
       return new CircleSkirtPattern(
         {
-          degrees: this.positionsValues.degrees,
-          lineWidth: this.positionsValues.lineWidth,
-          skirtLength: this.positionsValues.skirtLength,
-          waist: this.positionsValues.skirtLength,
+          degrees: this.positions.degrees.value!,
+          lineWidth: this.positions.lineWidth.value!,
+          skirtLength: this.positions.skirtLength.value!,
+          waist: this.positions.skirtLength.value!,
         },
-        { isHalved: this.selectsValues.isHalved, shouldRepeat: this.selectsValues.shouldRepeat }
+        { isHalved: this.selects.isHalved.value!, shouldRepeat: this.selects.shouldRepeat.value! }
       );
     throw new Error("Configuration is not ready!");
   }
   public override isReady() {
     let result = super.isReady();
     if (result) {
-      this.positions.forEach((position) => {
-        if (this.positionsValues[position] <= 0 || Number.isNaN(this.positionsValues[position])) {
+      Object.keys(this.positions).forEach((position) => {
+        if (this.positions[position].value! <= 0 || Number.isNaN(this.positions[position].value)) {
           result = false;
         }
       });
@@ -36,12 +56,14 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
     const messages = super.getUnreadyMessages();
     const positionsWithTooLowValues: string[] = [];
     const positionsWithNaNs: string[] = [];
-    this.positions.forEach((position) => {
-      if (this.positionsValues[position] <= 0) {
-        positionsWithTooLowValues.push(position);
-      }
-      if (Number.isNaN(this.positionsValues[position])) {
-        positionsWithNaNs.push(position);
+    Object.keys(this.positions).forEach((position) => {
+      if ("value" in this.positions[position]) {
+        if (this.positions[position].value! <= 0) {
+          positionsWithTooLowValues.push(position);
+        }
+        if (Number.isNaN(this.positions[position].value)) {
+          positionsWithNaNs.push(position);
+        }
       }
     });
     if (positionsWithTooLowValues.length > 0) {
