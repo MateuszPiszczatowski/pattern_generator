@@ -136,6 +136,7 @@ export default function CanvasPage({
     marginInPixels.left,
     marginInPixels.right,
     marginInPixels.top,
+    pageCount,
     paperConfig.height,
     paperConfig.helpingBorders,
     paperConfig.helpingCorners,
