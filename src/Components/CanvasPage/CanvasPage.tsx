@@ -81,7 +81,7 @@ export default function CanvasPage({
       );
 
       canvasContext.stroke();
-    } // TODO: Implement helping corners}
+    }
 
     function printBorders(canvasContext: CanvasRenderingContext2D) {
       canvasContext.fillStyle = "rgba(0 0 0 / 20%)";

@@ -6,6 +6,7 @@ import {
   ReactNode,
   SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -135,24 +136,43 @@ const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
   const [pages, setPages] = useState([] as ReactNode[]);
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
+  const { cols, rows, paperConfigToUse } = useMemo(() => {
+    const defaultColsAndRows = getCanvasPagesCount(imageConfig, paperConfig);
+    const reorientedColsAndRows = getCanvasPagesCount(
+      imageConfig,
+      paperConfig.getWithChangedOrientation()
+    );
+    let cols, rows: number;
+    let paperConfigToUse: IPaperConfig;
+    if (
+      defaultColsAndRows.cols * defaultColsAndRows.rows <=
+      reorientedColsAndRows.cols * reorientedColsAndRows.rows
+    ) {
+      ({ cols, rows } = defaultColsAndRows);
+      paperConfigToUse = paperConfig;
+    } else {
+      ({ cols, rows } = reorientedColsAndRows);
+      paperConfigToUse = paperConfig.getWithChangedOrientation();
+    }
+    return { cols, rows, paperConfigToUse };
+  }, [imageConfig, paperConfig]);
   useEffect(() => {
-    const { cols, rows } = getCanvasPagesCount(imageConfig, paperConfig);
     const imageElem = imageRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {
-      onImageLoad(canvasSizingHelperElem, paperConfig, imageElem, cols, rows, setPages);
+      onImageLoad(canvasSizingHelperElem, paperConfigToUse, imageElem, cols, rows, setPages);
     };
     imageElem.src = imageConfig.source;
-  }, [imageConfig, paperConfig]);
+  }, [cols, imageConfig, paperConfigToUse, rows]);
   return (
     <>
       <div
         ref={canvasSizingHelper}
         style={{
           position: "absolute",
-          left: `-${paperConfig.width}${paperConfig.unit}`,
-          width: `${paperConfig.width}${paperConfig.unit}`,
-          height: `${paperConfig.height}${paperConfig.unit}`,
+          left: `-${paperConfigToUse.width}${paperConfigToUse.unit}`,
+          width: `${paperConfigToUse.width}${paperConfigToUse.unit}`,
+          height: `${paperConfigToUse.height}${paperConfigToUse.unit}`,
         }}
       />
       <img

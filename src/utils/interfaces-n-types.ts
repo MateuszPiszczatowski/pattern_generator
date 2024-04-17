@@ -24,6 +24,7 @@ export interface IPaperConfig {
   helpingCorners: boolean;
   helpingBorders: boolean;
   pagesCounter: boolean;
+  getWithChangedOrientation: () => IPaperConfig;
 }
 export type PaperUnit = "mm" | "cm" | "in";
 

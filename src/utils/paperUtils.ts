@@ -37,6 +37,24 @@ export class PaperConfig implements IPaperConfig {
     } else this.margin = this.getDefaultMargin();
   }
 
+  public getWithChangedOrientation() {
+    const reorientedPaperConfig = new PaperConfig(
+      this.unit,
+      this.height,
+      this.width,
+      this.helpingBorders,
+      this.helpingCorners,
+      this.pagesCounter,
+      {
+        top: this.margin.left,
+        right: this.margin.top,
+        bottom: this.margin.right,
+        left: this.margin.bottom,
+      }
+    );
+    return reorientedPaperConfig;
+  }
+
   private getDefaultMargin(): IMargin {
     return {
       top: 0,
