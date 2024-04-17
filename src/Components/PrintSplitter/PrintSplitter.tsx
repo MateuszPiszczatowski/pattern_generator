@@ -183,7 +183,7 @@ const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
-      <article style={{ border: "1px solid black" }}>{...pages}</article>
+      <article style={{ display: "flex", flexDirection: "column" }}>{...pages}</article>
     </>
   );
 };
