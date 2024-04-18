@@ -27,3 +27,6 @@ Style the web app so it looks at least somewhat aesthetically.
 Refactor the code (things escalated quickly. When I was starting this project, it was a bit smaller idea than it is now. Due to this lots of things could be done better).  
 Implement routing so one would be able to bookmark their favourite patterns instead of the main page.  
 Add more patterns.
+
+## Credits
+Favicon by [Freepik](freepik.com "Freepik")
