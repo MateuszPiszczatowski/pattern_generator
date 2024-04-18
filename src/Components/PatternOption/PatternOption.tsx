@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { IImageConfig, IPatternConfigurator } from "../../utils/interfaces-n-types";
 import PatternForm from "../PatterForm/PatterForm";
+import css from "./PatternOption.module.scss";
 
 export default function PatternOption({
   patternConfigurator,
@@ -22,7 +23,7 @@ export default function PatternOption({
           />
         )
       }>
-      <figure>
+      <figure className={css.Figure}>
         <img src={patternConfigurator.picture}></img>
         <figcaption>{patternConfigurator.title}</figcaption>
       </figure>

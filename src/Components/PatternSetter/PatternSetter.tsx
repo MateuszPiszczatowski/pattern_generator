@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import PatternsBrowser from "../PatternsBrowser/PatternsBrowser";
 import { IImageConfig } from "../../utils/interfaces-n-types";
-
+import css from "./PatternSetter.module.scss";
 export default function PatternSetter({
   setImageConfig,
   setIsModalEnabled,
@@ -9,9 +9,10 @@ export default function PatternSetter({
 }: IPatternSetterProps) {
   const [currentPattern, setCurrentPatter] = useState("");
   return (
-    <section>
-      <h6>Current pattern: {currentPattern}</h6>
+    <div>
+      <h2 className={css.Header}>Current pattern: {currentPattern}</h2>
       <button
+        className={css.Button}
         onClick={() => {
           setModalChildren([
             <PatternsBrowser
@@ -25,7 +26,7 @@ export default function PatternSetter({
         }}>
         Change pattern
       </button>
-    </section>
+    </div>
   );
 }
 

@@ -2,6 +2,7 @@ import * as paperUtils from "../../utils/paperUtils";
 import { IPaperConfig } from "../../utils/interfaces-n-types";
 import { ChangeEvent, ReactNode, useRef } from "react";
 import FormatForm from "../FormatForm/FormatForm";
+import css from "./FormatSetter.module.scss";
 
 export default function FormatSetter({
   paperConfig,
@@ -26,9 +27,9 @@ export default function FormatSetter({
   };
 
   return (
-    <>
-      <h6>Current paper format:</h6>
-      <table>
+    <div>
+      <h6 className={css.Header}>Current paper format:</h6>
+      <table className={css.InfoTable}>
         <thead>
           <tr>
             <th>Unit</th>
@@ -52,21 +53,23 @@ export default function FormatSetter({
           </tr>
         </tbody>
       </table>
-      <label htmlFor="paperFormat">Select paper format</label>
-      <select name="paperFormat" ref={formatSelectRef} onChange={customMargins}>
-        {Object.keys(paperUtils.DefaultSizes).map((key) => {
-          return (
-            <option value={key} key={key}>
-              {key[0].toUpperCase().concat(key.slice(1))}
-            </option>
-          );
-        })}
-        <option value="custom">Custom</option>
-      </select>
+      <label className={css.Label} htmlFor="paperFormat">
+        Select paper format:
+        <select ref={formatSelectRef} onChange={customMargins}>
+          {Object.keys(paperUtils.DefaultSizes).map((key) => {
+            return (
+              <option value={key} key={key}>
+                {key[0].toUpperCase().concat(key.slice(1))}
+              </option>
+            );
+          })}
+          <option value="custom">Custom</option>
+        </select>
+      </label>
       {formatSelectRef.current?.value === "custom" && (
         <button onClick={openCustomMarginEdit}>Edit</button>
       )}
-    </>
+    </div>
   );
 }
 

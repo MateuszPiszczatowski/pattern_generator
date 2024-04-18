@@ -1,6 +1,8 @@
 import { FormEvent, useRef } from "react";
 import { IPaperConfig, PaperUnit } from "../../utils/interfaces-n-types";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
+import { PaperConfig } from "../../utils/paperUtils";
+import css from "./FormatForm.module.scss";
 
 export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IFormatFormProps) {
   const formRef = useRef(null as null | HTMLFormElement);
@@ -11,20 +13,20 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const values = e.currentTarget.elements;
-    const paperConfig: IPaperConfig = {
-      height: Number((values.namedItem("height") as HTMLInputElement).value),
-      width: Number((values.namedItem("width") as HTMLInputElement).value),
-      unit: (values.namedItem("unit") as HTMLSelectElement).value as PaperUnit,
-      helpingBorders: (values.namedItem("helpingBorders") as HTMLInputElement).checked,
-      helpingCorners: (values.namedItem("helpingCorners") as HTMLInputElement).checked,
-      pagesCounter: (values.namedItem("pagesCounter") as HTMLInputElement).checked,
-      margin: {
+    const paperConfig: IPaperConfig = new PaperConfig(
+      (values.namedItem("unit") as HTMLSelectElement).value as PaperUnit,
+      Number((values.namedItem("width") as HTMLInputElement).value),
+      Number((values.namedItem("height") as HTMLInputElement).value),
+      (values.namedItem("helpingBorders") as HTMLInputElement).checked,
+      (values.namedItem("helpingCorners") as HTMLInputElement).checked,
+      (values.namedItem("pagesCounter") as HTMLInputElement).checked,
+      {
         top: Number((values.namedItem("top") as HTMLInputElement).value),
         bottom: Number((values.namedItem("bottom") as HTMLInputElement).value),
         left: Number((values.namedItem("left") as HTMLInputElement).value),
         right: Number((values.namedItem("right") as HTMLInputElement).value),
-      },
-    };
+      }
+    );
     if (
       paperConfig.height > paperConfig.margin.top + paperConfig.margin.bottom &&
       paperConfig.width > paperConfig.margin.left + paperConfig.margin.right
@@ -37,43 +39,43 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
   };
 
   return (
-    <form ref={formRef} onSubmit={onSubmit}>
+    <form ref={formRef} onSubmit={onSubmit} className={css.Form}>
       <LabeledUnitSelect />
-      <label htmlFor="width">
+      <label htmlFor="width" className={css.Label}>
         Width: <input name="width" type="number" defaultValue={10} />
       </label>
-      <label htmlFor="height">
+      <label htmlFor="height" className={css.Label}>
         Height: <input name="height" type="number" defaultValue={10} />
       </label>
-      <label>
+      <label className={css.Label}>
         Should print helping borders:
         <input name="helpingBorders" type="checkbox" defaultChecked={true} />
       </label>
-      <label>
+      <label className={css.Label}>
         Should print helping cornes:
         <input name="helpingCorners" type="checkbox" defaultChecked={true} />
       </label>
-      <label>
+      <label className={css.Label}>
         Should print page number:
         <input name="pagesCounter" type="checkbox" defaultChecked={true} />
       </label>
       <label></label>
-      <h6>Margins:</h6>
-      <section>
-        <label htmlFor="top">
+      <h3 className={css.Header}>Margins:</h3>
+      <section className={css.MarginSection}>
+        <label htmlFor="top" className={css.Label}>
           Top: <input name="top" type="number" defaultValue={1} />
         </label>
-        <label htmlFor="right">
+        <label htmlFor="right" className={css.Label}>
           Right: <input name="right" type="number" defaultValue={1} />
         </label>
-        <label htmlFor="bottom">
+        <label htmlFor="bottom" className={css.Label}>
           Bottom: <input name="bottom" type="number" defaultValue={1} />
         </label>
-        <label htmlFor="left">
+        <label htmlFor="left" className={css.Label}>
           Left: <input name="left" type="number" defaultValue={1} />
         </label>
       </section>
-      <div>
+      <div className={css.ButtonsContainer}>
         <input type="submit" value="Save" />
         <button type="button" onClick={onCancel}>
           Cancel

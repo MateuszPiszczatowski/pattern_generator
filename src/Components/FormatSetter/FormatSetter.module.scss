@@ -1,0 +1,13 @@
+@use "../../utils/variables";
+.Header {
+  font-size: 1em;
+  margin: 0.2em 0;
+}
+.InfoTable {
+  padding-left: variables.$leftDistance;
+}
+.Label {
+  margin-left: variables.$leftDistance;
+  display: flex;
+  gap: 0.5em;
+}

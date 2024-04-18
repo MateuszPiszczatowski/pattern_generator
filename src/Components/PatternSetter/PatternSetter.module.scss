@@ -1,0 +1,8 @@
+@use "../../utils/variables";
+.Header {
+  font-size: 1em;
+  margin: 0.2em 0;
+}
+.Button {
+  margin-left: variables.$leftDistance;
+}

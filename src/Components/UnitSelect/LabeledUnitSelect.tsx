@@ -1,6 +1,6 @@
-export default function LabeledUnitSelect() {
+export default function LabeledUnitSelect({ style }: ILabeledUnitSelectProps) {
   return (
-    <label htmlFor="unit">
+    <label htmlFor="unit" className={style}>
       Unit:{" "}
       <select name="unit" defaultValue="cm">
         {["in", "cm", "mm"].map((unit) => (
@@ -11,4 +11,8 @@ export default function LabeledUnitSelect() {
       </select>
     </label>
   );
+}
+
+interface ILabeledUnitSelectProps {
+  style?: string;
 }

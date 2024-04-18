@@ -1,0 +1,26 @@
+@use "../../utils/variables";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.Form {
+  padding: 0.5em;
+}
+.Label {
+  display: flex;
+  justify-content: space-between;
+}
+.Header {
+  margin: 0;
+}
+.MarginSection {
+  padding-left: variables.$leftDistance;
+}
+.ButtonsContainer {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}

@@ -1,26 +1,17 @@
 import { ReactNode } from "react";
-import CircleSkirtPattern from "../../SewingPatterns/CircleSkirt";
-import CircleSkirtConfigurator from "../../SewingPatternsConfigurators/CircleSkirtConfigurator";
 import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
+import css from "./PatternBrowser.module.scss";
+
 export default function PatternsBrowser({
   setImageConfig,
   setPattern,
   setModalChildren,
   setIsModalEnabled,
 }: IPatternsBrowserProps) {
-  const patternConfig = new CircleSkirtConfigurator();
-  patternConfig.setPosition("waist", 80);
-  patternConfig.setPosition("skirtLength", 80);
-  patternConfig.setPosition("degrees", 185);
-  patternConfig.setPosition("lineWidth", 0.1);
-  patternConfig.setSelect("isHalved", true);
-  patternConfig.setSelect("shouldRepeat", false);
-
-  const pattern: CircleSkirtPattern = patternConfig.getPattern();
   return (
-    <div>
+    <div className={css.Container}>
       {...patternsConfiguratorsList.map((configurator) => (
         <PatternOption
           patternConfigurator={configurator}
@@ -30,18 +21,6 @@ export default function PatternsBrowser({
           setPattern={setPattern}
         />
       ))}
-      <button
-        onClick={() => {
-          setImageConfig({
-            height: pattern.getHeight(),
-            width: pattern.getWidth(),
-            unit: "cm",
-            source: pattern.getDataUrl(),
-          });
-          setPattern("Test");
-        }}>
-        Set to default
-      </button>
     </div>
   );
 }
