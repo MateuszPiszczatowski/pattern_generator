@@ -65,13 +65,28 @@ export class PaperConfig implements IPaperConfig {
   }
 }
 
+const defaultMargins = {
+  mm: {
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10,
+  },
+  in: {
+    top: 0.5,
+    right: 0.5,
+    bottom: 0.5,
+    left: 0.5,
+  },
+};
+
 export const DefaultSizes: { [key: string]: PaperConfig } = {
-  a4: new PaperConfig("mm", 210, 297, true, true, true),
-  a3: new PaperConfig("mm", 297, 420, true, true, true),
-  a0: new PaperConfig("mm", 841, 1189, true, true, true),
-  letter: new PaperConfig("in", 8.5, 11, true, true, true),
-  legal: new PaperConfig("in", 8.5, 14, true, true, true),
-  tabloid: new PaperConfig("in", 11, 17, true, true, true),
+  a4: new PaperConfig("mm", 210, 297, true, true, true, defaultMargins.mm),
+  a3: new PaperConfig("mm", 297, 420, true, true, true, defaultMargins.mm),
+  a0: new PaperConfig("mm", 841, 1189, true, true, true, defaultMargins.mm),
+  letter: new PaperConfig("in", 8.5, 11, true, true, true, defaultMargins.in),
+  legal: new PaperConfig("in", 8.5, 14, true, true, true, defaultMargins.in),
+  tabloid: new PaperConfig("in", 11, 17, true, true, true, defaultMargins.in),
 };
 
 export function changeUnit(number: number, numberUnit: PaperUnit, toUnit: PaperUnit) {
