@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ChangeEvent, ReactNode, useState } from "react";
 import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
@@ -10,18 +10,32 @@ export default function PatternsBrowser({
   setModalChildren,
   setIsModalEnabled,
 }: IPatternsBrowserProps) {
+  const [filter, setFilter] = useState("");
+  function onFilterChange(e: ChangeEvent<HTMLInputElement>) {
+    setFilter(e.currentTarget.value);
+  }
   return (
-    <div className={css.Container}>
-      {...patternsConfiguratorsList.map((configurator) => (
-        <PatternOption
-          patternConfigurator={configurator}
-          setModalChildren={setModalChildren}
-          setIsModalEnabled={setIsModalEnabled}
-          setImageConfig={setImageConfig}
-          setPattern={setPattern}
-        />
-      ))}
-    </div>
+    <>
+      <label>
+        Filter by name:
+        <input type="text" onChange={onFilterChange} />
+      </label>
+      <div className={css.Container}>
+        {...patternsConfiguratorsList
+          .filter((configurator) =>
+            configurator.title.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+          )
+          .map((configurator) => (
+            <PatternOption
+              patternConfigurator={configurator}
+              setModalChildren={setModalChildren}
+              setIsModalEnabled={setIsModalEnabled}
+              setImageConfig={setImageConfig}
+              setPattern={setPattern}
+            />
+          ))}
+      </div>
+    </>
   );
 }
 

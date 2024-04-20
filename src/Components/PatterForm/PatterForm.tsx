@@ -1,6 +1,5 @@
 import { FormEvent, ReactNode } from "react";
 import { IImageConfig, IPatternConfigurator, PaperUnit } from "../../utils/interfaces-n-types";
-import PatternsBrowser from "../PatternsBrowser/PatternsBrowser";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import css from "./PatternForm.module.scss";
 
@@ -49,19 +48,6 @@ export default function PatternForm({
   }
   return (
     <div className={css.Container}>
-      <button
-        onClick={() =>
-          setModalChildren(
-            <PatternsBrowser
-              setImageConfig={setImageConfig}
-              setIsModalEnabled={setIsModalEnabled}
-              setModalChildren={setModalChildren}
-              setPattern={setPattern}
-            />
-          )
-        }>
-        Back to pattern browser
-      </button>
       <form onSubmit={onSubmit} className={css.Form}>
         <LabeledUnitSelect />
         {...Object.keys(patternConfigurator.positions).map((position) => {

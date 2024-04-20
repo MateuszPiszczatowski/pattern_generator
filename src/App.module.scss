@@ -1,7 +1,20 @@
 .Section {
+  margin: 0 auto;
   width: fit-content;
   display: flex;
   flex-direction: column;
   padding-top: 5em;
   gap: 0.5em;
+}
+
+.Title {
+  width: 80%;
+  margin: 1vh 0 0;
+  padding: 0 0 0 15%;
+}
+
+.Header {
+  width: 100%;
+  background-color: rgba(255, 240, 255, 1);
+  font-family: "Courier", Courier, monospace;
 }

@@ -12,7 +12,8 @@ export default function PatternOption({
 }: IPatternOptionProps) {
   return (
     <button
-      onClick={() =>
+      onClick={() => {
+        setIsModalEnabled(true);
         setModalChildren(
           <PatternForm
             patternConfigurator={patternConfigurator}
@@ -21,8 +22,8 @@ export default function PatternOption({
             setPattern={setPattern}
             setIsModalEnabled={setIsModalEnabled}
           />
-        )
-      }>
+        );
+      }}>
       <figure className={css.Figure}>
         <img src={patternConfigurator.picture}></img>
         <figcaption>{patternConfigurator.title}</figcaption>

@@ -27,8 +27,9 @@ export default function FormatSetter({
   };
 
   return (
-    <div>
-      <h6 className={css.Header}>Current paper format:</h6>
+    <section>
+      <h2>Paper format section</h2>
+      <h3 className={css.Header}>Current paper format:</h3>
       <table className={css.InfoTable}>
         <thead>
           <tr>
@@ -69,7 +70,7 @@ export default function FormatSetter({
       {formatSelectRef.current?.value === "custom" && (
         <button onClick={openCustomMarginEdit}>Edit</button>
       )}
-    </div>
+    </section>
   );
 }
 

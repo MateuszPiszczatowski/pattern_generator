@@ -9,24 +9,15 @@ export default function PatternSetter({
 }: IPatternSetterProps) {
   const [currentPattern, setCurrentPatter] = useState("");
   return (
-    <div>
-      <h2 className={css.Header}>Current pattern: {currentPattern}</h2>
-      <button
-        className={css.Button}
-        onClick={() => {
-          setModalChildren([
-            <PatternsBrowser
-              setImageConfig={setImageConfig}
-              setPattern={setCurrentPatter}
-              setModalChildren={setModalChildren}
-              setIsModalEnabled={setIsModalEnabled}
-            />,
-          ]);
-          setIsModalEnabled(true);
-        }}>
-        Change pattern
-      </button>
-    </div>
+    <section>
+      <h2>Pattern section</h2>
+      <h3 className={css.Header}>Current pattern: {currentPattern}</h3>
+      <PatternsBrowser
+        setImageConfig={setImageConfig}
+        setPattern={setCurrentPatter}
+        setModalChildren={setModalChildren}
+        setIsModalEnabled={setIsModalEnabled}></PatternsBrowser>
+    </section>
   );
 }
 

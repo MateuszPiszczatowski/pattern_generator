@@ -18,26 +18,32 @@ function App() {
   const [isModalEnabled, setIsModalEnabled] = useState(false);
   return (
     <>
-      <section
-        hidden={isPrintingViewEnabled}
-        style={{ display: isPrintingViewEnabled ? "none" : "flex" }}
-        className={css.Section}>
-        <PatternSetter
-          setImageConfig={setImageConfig}
-          setIsModalEnabled={setIsModalEnabled}
-          setModalChildren={setModalContent}
-        />
-        <FormatSetter
-          paperConfig={paperConfig}
-          setIsModalEnabled={setIsModalEnabled}
-          setModalChildren={setModalContent}
-          setPaperConfig={setPaperConfig}
-        />
-        <button disabled={!imageConfig} onClick={() => setIsPrintingViewEnabled(true)}>
-          Show for printing
-        </button>
-      </section>
-
+      <header className={css.Header}>
+        <h1 className={css.Title} hidden={isPrintingViewEnabled}>
+          PolTailorEx
+        </h1>
+      </header>
+      <main>
+        <section
+          hidden={isPrintingViewEnabled}
+          style={{ display: isPrintingViewEnabled ? "none" : "flex" }}
+          className={css.Section}>
+          <PatternSetter
+            setImageConfig={setImageConfig}
+            setIsModalEnabled={setIsModalEnabled}
+            setModalChildren={setModalContent}
+          />
+          <FormatSetter
+            paperConfig={paperConfig}
+            setIsModalEnabled={setIsModalEnabled}
+            setModalChildren={setModalContent}
+            setPaperConfig={setPaperConfig}
+          />
+          <button disabled={!imageConfig} onClick={() => setIsPrintingViewEnabled(true)}>
+            Show for printing
+          </button>
+        </section>
+      </main>
       <section
         onLoad={(e) => {
           e.currentTarget.focus();
