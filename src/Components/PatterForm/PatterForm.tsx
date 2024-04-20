@@ -3,13 +3,7 @@ import { IImageConfig, IPatternConfigurator, PaperUnit } from "../../utils/inter
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import css from "./PatternForm.module.scss";
 
-export default function PatternForm({
-  patternConfigurator,
-  setModalChildren,
-  setImageConfig,
-  setPattern,
-  setIsModalEnabled,
-}: IPatternFormProps) {
+export default function PatternForm({ patternConfigurator, setImageConfig }: IPatternFormProps) {
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const positions: { [key: string]: number } = {};
@@ -29,7 +23,6 @@ export default function PatternForm({
     Object.keys(positions).forEach((key) => patternConfigurator.setPosition(key, positions[key]));
     Object.keys(selects).forEach((key) => patternConfigurator.setSelect(key, selects[key]));
     if (patternConfigurator.isReady()) {
-      setPattern(patternConfigurator.title);
       const pattern = patternConfigurator.getPattern();
       setImageConfig({
         height: pattern.getHeight(),
@@ -37,8 +30,6 @@ export default function PatternForm({
         source: pattern.getDataUrl(),
         unit: (e.currentTarget.elements.namedItem("unit") as HTMLInputElement).value as PaperUnit,
       });
-      setModalChildren(<></>);
-      setIsModalEnabled(false);
       return;
     } else {
       window.alert("".concat(...patternConfigurator.getUnreadyMessages()));
@@ -87,6 +78,4 @@ interface IPatternFormProps {
   patternConfigurator: IPatternConfigurator;
   setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
-  setPattern: React.Dispatch<React.SetStateAction<string>>;
-  setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -5,22 +5,19 @@ import css from "./PatternOption.module.scss";
 
 export default function PatternOption({
   patternConfigurator,
-  setModalChildren,
+  setFormContainerChildren,
   setImageConfig,
   setPattern,
-  setIsModalEnabled,
 }: IPatternOptionProps) {
   return (
     <button
       onClick={() => {
-        setIsModalEnabled(true);
-        setModalChildren(
+        setPattern(patternConfigurator.title);
+        setFormContainerChildren(
           <PatternForm
             patternConfigurator={patternConfigurator}
-            setModalChildren={setModalChildren}
+            setModalChildren={setFormContainerChildren}
             setImageConfig={setImageConfig}
-            setPattern={setPattern}
-            setIsModalEnabled={setIsModalEnabled}
           />
         );
       }}>
@@ -34,8 +31,7 @@ export default function PatternOption({
 
 interface IPatternOptionProps {
   patternConfigurator: IPatternConfigurator;
-  setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
+  setFormContainerChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
   setPattern: React.Dispatch<React.SetStateAction<string>>;
-  setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -1,16 +1,15 @@
-import { ChangeEvent, ReactNode, useState } from "react";
+import { ChangeEvent, ReactNode, useRef, useState } from "react";
 import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
 import css from "./PatternBrowser.module.scss";
-
-export default function PatternsBrowser({
-  setImageConfig,
-  setPattern,
-  setModalChildren,
-  setIsModalEnabled,
-}: IPatternsBrowserProps) {
+import { nanoid } from "nanoid";
+export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
   const [filter, setFilter] = useState("");
+  const formContainerRef = useRef(null as null | HTMLDivElement);
+  const [formContainerChildren, setFormContainerChildren] = useState(
+    null as ReactNode | ReactNode[]
+  );
   function onFilterChange(e: ChangeEvent<HTMLInputElement>) {
     setFilter(e.currentTarget.value);
   }
@@ -28,13 +27,18 @@ export default function PatternsBrowser({
           .map((configurator) => (
             <PatternOption
               patternConfigurator={configurator}
-              setModalChildren={setModalChildren}
-              setIsModalEnabled={setIsModalEnabled}
+              setFormContainerChildren={setFormContainerChildren}
               setImageConfig={setImageConfig}
               setPattern={setPattern}
+              key={nanoid()}
             />
           ))}
       </div>
+      {formContainerChildren != null ? (
+        <div className={css.FormContainer} ref={formContainerRef}>
+          {formContainerChildren}
+        </div>
+      ) : null}
     </>
   );
 }
@@ -42,6 +46,5 @@ export default function PatternsBrowser({
 interface IPatternsBrowserProps {
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
   setPattern: React.Dispatch<React.SetStateAction<string>>;
-  setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
   setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

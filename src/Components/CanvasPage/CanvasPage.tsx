@@ -38,15 +38,6 @@ export default function CanvasPage({
         marginInPixels.left + width / 2 - textSize.width / 2,
         marginInPixels.top + height / 2 + fontSize / 2.5
       );
-      console.log({
-        fontSize: fontSize,
-        width: width,
-        height: height,
-        font: canvasContext.font,
-        fillStyle: canvasContext.fillStyle,
-        text: `${pageCount}`,
-        position: { x: marginInPixels.left, y: marginInPixels.top },
-      });
     }
 
     function printCorners(canvasContext: CanvasRenderingContext2D) {

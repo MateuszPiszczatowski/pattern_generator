@@ -1,7 +1,7 @@
 import PrintSplitter from "./Components/PrintSplitter/PrintSplitter";
 import css from "./App.module.scss";
 import * as paperUtils from "./utils/paperUtils";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { IImageConfig, IPaperConfig } from "./utils/interfaces-n-types";
 import Modal from "./Components/Modal/Modal";
 import PatternSetter from "./Components/PatternSetter/PatternSetter";
@@ -16,6 +16,13 @@ function App() {
   const [isPrintingViewEnabled, setIsPrintingViewEnabled] = useState(false);
   const [modalContent, setModalContent] = useState(null as ReactNode);
   const [isModalEnabled, setIsModalEnabled] = useState(false);
+  const [isBackgroundColored, setIsBackgroundColored] = useState(true);
+  useEffect(() => {
+    const bodyElem = document.querySelector("body");
+    if (bodyElem)
+      if (isBackgroundColored) bodyElem.style.removeProperty("background-color");
+      else bodyElem.style.backgroundColor = "#fff";
+  }, [isBackgroundColored]);
   return (
     <>
       <header className={css.Header}>
@@ -39,7 +46,12 @@ function App() {
             setModalChildren={setModalContent}
             setPaperConfig={setPaperConfig}
           />
-          <button disabled={!imageConfig} onClick={() => setIsPrintingViewEnabled(true)}>
+          <button
+            disabled={!imageConfig}
+            onClick={() => {
+              setIsPrintingViewEnabled(true);
+              setIsBackgroundColored(false);
+            }}>
             Show for printing
           </button>
         </section>
@@ -52,7 +64,10 @@ function App() {
         ref={printingSectionRef}
         hidden={!isPrintingViewEnabled}
         onKeyDown={(e) => {
-          if (e.key === "Escape") setIsPrintingViewEnabled(false);
+          if (e.key === "Escape") {
+            setIsBackgroundColored(true);
+            setIsPrintingViewEnabled(false);
+          }
         }}>
         {imageConfig && isPrintingViewEnabled && (
           <PrintSplitter imageConfig={imageConfig} paperConfig={paperConfig} />

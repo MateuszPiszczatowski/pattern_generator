@@ -1,10 +1,26 @@
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: rgba(255, 240, 255, 0.3);
+  padding: 0 0 3em;
+  background-color: #fed8f1;
 }
 #root {
   width: 100%;
   margin: 0 0;
+}
+button,
+input[type="submit"] {
+  background-color: #c4ccf0;
+  color: #49416d;
+  font-weight: 700;
+  border-radius: 0.5em;
+  padding: 0.4em;
+  border: none;
+  box-shadow: inset -1px -1px;
+  &:hover {
+    background-color: #c9d1f5;
+  }
+  &:active {
+    box-shadow: inset 1px 1px;
+  }
 }
