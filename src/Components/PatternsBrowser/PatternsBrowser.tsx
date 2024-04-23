@@ -4,8 +4,9 @@ import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
 import css from "./PatternBrowser.module.scss";
 import { nanoid } from "nanoid";
-export default function PatternsBrowser({ setImageConfig, setPattern }: IPatternsBrowserProps) {
+export default function PatternsBrowser({ setImageConfig }: IPatternsBrowserProps) {
   const [filter, setFilter] = useState("");
+  const [patternName, setPatternName] = useState("");
   const formContainerRef = useRef(null as null | HTMLDivElement);
   const [formContainerChildren, setFormContainerChildren] = useState(
     null as ReactNode | ReactNode[]
@@ -29,22 +30,23 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
               patternConfigurator={configurator}
               setFormContainerChildren={setFormContainerChildren}
               setImageConfig={setImageConfig}
-              setPattern={setPattern}
+              setPattern={setPatternName}
               key={nanoid()}
             />
           ))}
       </div>
-      {formContainerChildren != null ? (
-        <div className={css.FormContainer} ref={formContainerRef}>
-          {formContainerChildren}
-        </div>
-      ) : null}
+      {formContainerChildren && (
+        <>
+          <h3 className={css.Heading3}>Current pattern: {patternName}</h3>
+          <div className={css.FormContainer} ref={formContainerRef}>
+            {formContainerChildren}
+          </div>
+        </>
+      )}
     </>
   );
 }
 
 interface IPatternsBrowserProps {
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
-  setPattern: React.Dispatch<React.SetStateAction<string>>;
-  setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

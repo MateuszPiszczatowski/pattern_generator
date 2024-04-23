@@ -1,9 +1,8 @@
 .Section {
-  margin: 0 auto;
-  width: fit-content;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: 2em;
+  align-items: center;
   gap: 0.5em;
 }
 

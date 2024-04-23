@@ -35,11 +35,7 @@ function App() {
           hidden={isPrintingViewEnabled}
           style={{ display: isPrintingViewEnabled ? "none" : "flex" }}
           className={css.Section}>
-          <PatternSetter
-            setImageConfig={setImageConfig}
-            setIsModalEnabled={setIsModalEnabled}
-            setModalChildren={setModalContent}
-          />
+          <PatternSetter setImageConfig={setImageConfig} setModalChildren={setModalContent} />
           <FormatSetter
             paperConfig={paperConfig}
             setIsModalEnabled={setIsModalEnabled}

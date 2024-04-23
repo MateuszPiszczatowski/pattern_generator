@@ -1,23 +1,19 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import PatternsBrowser from "../PatternsBrowser/PatternsBrowser";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import css from "./PatternSetter.module.scss";
-export default function PatternSetter({ setImageConfig, setIsModalEnabled }: IPatternSetterProps) {
-  const [currentPattern, setCurrentPatter] = useState("");
+export default function PatternSetter({ setImageConfig }: IPatternSetterProps) {
   return (
-    <section>
-      <h2>Pattern section</h2>
-      <h3 className={css.Header}>Current pattern: {currentPattern}</h3>
-      <PatternsBrowser
-        setImageConfig={setImageConfig}
-        setPattern={setCurrentPatter}
-        setIsModalEnabled={setIsModalEnabled}></PatternsBrowser>
+    <section className={css.Section}>
+      <div className={css.SectionContent}>
+        <h2 className={css.Heading2}>Pattern configuration</h2>
+        <PatternsBrowser setImageConfig={setImageConfig}></PatternsBrowser>
+      </div>
     </section>
   );
 }
 
 interface IPatternSetterProps {
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
-  setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
 }

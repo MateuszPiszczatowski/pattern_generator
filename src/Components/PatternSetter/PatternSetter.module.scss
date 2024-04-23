@@ -1,8 +1,17 @@
 @use "../../utils/variables";
-.Header {
-  font-size: 1em;
-  margin: 0.2em 0;
+.SectionContent {
+  width: variables.$width;
 }
-.Button {
-  margin-left: variables.$leftDistance;
+.Section {
+  width: 100%;
+  padding: 1em 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Heading2 {
+  font-size: 1.3em;
+  margin: 0;
+  padding: 0.4em 0;
 }
