@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { IImageConfig, IPatternConfigurator } from "../../utils/interfaces-n-types";
-import PatternForm from "../PatterForm/PatterForm";
+import PatternForm from "../PatternForm/PatternForm";
 import css from "./PatternOption.module.scss";
 
 export default function PatternOption({

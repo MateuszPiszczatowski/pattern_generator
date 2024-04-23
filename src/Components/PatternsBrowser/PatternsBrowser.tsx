@@ -15,7 +15,7 @@ export default function PatternsBrowser({ setImageConfig, setPattern }: IPattern
   }
   return (
     <>
-      <label>
+      <label className={css.Filter}>
         Filter by name:
         <input type="text" onChange={onFilterChange} />
       </label>

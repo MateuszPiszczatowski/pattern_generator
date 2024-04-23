@@ -2,11 +2,7 @@ import { ReactNode, useState } from "react";
 import PatternsBrowser from "../PatternsBrowser/PatternsBrowser";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import css from "./PatternSetter.module.scss";
-export default function PatternSetter({
-  setImageConfig,
-  setIsModalEnabled,
-  setModalChildren,
-}: IPatternSetterProps) {
+export default function PatternSetter({ setImageConfig, setIsModalEnabled }: IPatternSetterProps) {
   const [currentPattern, setCurrentPatter] = useState("");
   return (
     <section>
@@ -15,7 +11,6 @@ export default function PatternSetter({
       <PatternsBrowser
         setImageConfig={setImageConfig}
         setPattern={setCurrentPatter}
-        setModalChildren={setModalChildren}
         setIsModalEnabled={setIsModalEnabled}></PatternsBrowser>
     </section>
   );

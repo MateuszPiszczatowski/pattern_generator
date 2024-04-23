@@ -40,7 +40,7 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
   return (
     <div className={css.Container}>
       <form onSubmit={onSubmit} className={css.Form}>
-        <LabeledUnitSelect />
+        <LabeledUnitSelect style={css.Label} />
         {...Object.keys(patternConfigurator.positions).map((position) => {
           return (
             <label htmlFor={position} className={css.Label}>
