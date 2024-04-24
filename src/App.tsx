@@ -7,9 +7,11 @@ import { IImageConfig, IPaperConfig } from "./utils/interfaces-n-types";
 import Modal from "./Components/Modal/Modal";
 import PatternSetter from "./Components/PatternSetter/PatternSetter";
 import FormatSetter from "./Components/FormatSetter/FormatSetter";
+import { nanoid } from "nanoid";
 
 function App() {
   Notify.init({ showOnlyTheLastOne: true });
+  const [notifyClass] = useState(nanoid());
   const modalTabIndex = 1;
   const printingSectionTabIndex = 2;
   const printingSectionRef = useRef(null as null | HTMLDivElement);
@@ -49,7 +51,7 @@ function App() {
             onClick={() => {
               Notify.info("Press ESC to exit printing view.", {
                 timeout: 5000,
-                className: css.NoPrint,
+                className: css.NoPrint.concat(" ", notifyClass),
               });
               setIsPrintingViewEnabled(true);
               setIsBackgroundColored(false);
@@ -67,6 +69,8 @@ function App() {
         hidden={!isPrintingViewEnabled}
         onKeyDown={(e) => {
           if (e.key === "Escape") {
+            const notify = document.querySelector(`.${notifyClass}`);
+            notify?.parentElement?.removeChild(notify);
             setIsBackgroundColored(true);
             setIsPrintingViewEnabled(false);
           }
