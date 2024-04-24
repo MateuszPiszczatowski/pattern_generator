@@ -12,23 +12,7 @@ import {
 } from "react";
 import CanvasPage from "../CanvasPage/CanvasPage";
 import { IWidthAndHeight } from "../../utils/interfaces-n-types";
-
-function getImageSizesInPaperUnits(
-  imageConfig: IImageConfig,
-  paperConfig: IPaperConfig
-): IWidthAndHeight {
-  const imageWidthInPaperUnits = paperUtils.changeUnit(
-    imageConfig.width,
-    imageConfig.unit,
-    paperConfig.unit
-  );
-  const imageHeightInPaperUnits = paperUtils.changeUnit(
-    imageConfig.height,
-    imageConfig.unit,
-    paperConfig.unit
-  );
-  return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
-}
+import HelpingPage from "../HelpingPage/HelpingPage";
 
 function getCanvasDrawWidth(height: number, margin: IMargin): number {
   return height - (margin.left + margin.right);
@@ -60,7 +44,7 @@ function getCanvasPagesCount(
   paperConfig: IPaperConfig
 ): { rows: number; cols: number } {
   const { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits } =
-    getImageSizesInPaperUnits(imageConfig, paperConfig);
+    paperUtils.getIImageSizesInIPaperUnits(imageConfig, paperConfig);
   const { width: drawWidth, height: drawHeight } = getCanvasDrawSizes(paperConfig);
   const pagesColsCount = getCanvasCountForOneDimension(drawWidth, imageWidthInPaperUnits);
   const pagesRowsCount = getCanvasCountForOneDimension(drawHeight, imageHeightInPaperUnits);
@@ -96,7 +80,8 @@ function onImageLoad(
   imageElem: HTMLImageElement,
   cols: number,
   rows: number,
-  setPagesState: Dispatch<SetStateAction<ReactNode[]>>
+  setPagesState: Dispatch<SetStateAction<ReactNode[]>>,
+  helpingPage?: JSX.Element
 ): void {
   const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
   const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
@@ -105,10 +90,13 @@ function onImageLoad(
     margin: marginInPixels,
   });
   const imageDrawSizes = getImageDrawSizes(canvasDrawSizes, imageElem);
-  const canvases: JSX.Element[] = [];
+  const pages: JSX.Element[] = [];
+  if (helpingPage) {
+    pages.push(helpingPage);
+  }
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      canvases.push(
+      pages.push(
         <CanvasPage
           {...{
             paperConfig,
@@ -127,13 +115,20 @@ function onImageLoad(
           }}
         />
       );
-      setPagesState(canvases);
+      setPagesState(pages);
     }
   }
 }
 
-const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
+const PrintSplitter = ({
+  printGuidePage,
+  printSizesTest,
+  imageConfig,
+  paperConfig,
+  helperView,
+}: IPrintSplitterProps) => {
   const [pages, setPages] = useState([] as ReactNode[]);
+
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
   const { cols, rows, paperConfigToUse } = useMemo(() => {
@@ -160,10 +155,25 @@ const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
     const imageElem = imageRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
     imageElem.onload = () => {
-      onImageLoad(canvasSizingHelperElem, paperConfigToUse, imageElem, cols, rows, setPages);
+      onImageLoad(
+        canvasSizingHelperElem,
+        paperConfigToUse,
+        imageElem,
+        cols,
+        rows,
+        setPages,
+        printGuidePage || printSizesTest ? (
+          <HelpingPage
+            paperConfig={paperConfigToUse}
+            printGuidePage={printGuidePage}
+            printSizesTest={printSizesTest}
+            imageConfig={imageConfig}
+          />
+        ) : undefined
+      );
     };
     imageElem.src = imageConfig.source;
-  }, [cols, imageConfig, paperConfigToUse, rows]);
+  }, [cols, imageConfig, paperConfig, paperConfigToUse, printGuidePage, printSizesTest, rows]);
   return (
     <>
       <div
@@ -183,12 +193,23 @@ const PrintSplitter = ({ imageConfig, paperConfig }: IPrintSplitterProps) => {
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
-      <article style={{ display: "flex", flexDirection: "column" }}>{...pages}</article>
+      <article
+        style={{
+          display: "flex",
+          flexDirection: helperView ? "row" : "column",
+          flexWrap: helperView ? "wrap" : "nowrap",
+          width: helperView ? `${cols * paperConfigToUse.width}${paperConfig.unit}` : "100%",
+        }}>
+        {...pages}
+      </article>
     </>
   );
 };
 
 interface IPrintSplitterProps {
+  printSizesTest: boolean;
+  printGuidePage: boolean;
+  helperView: boolean;
   imageConfig: IImageConfig;
   paperConfig: IPaperConfig;
 }

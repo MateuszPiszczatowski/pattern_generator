@@ -1,4 +1,10 @@
-import { IPaperConfig, IMargin, PaperUnit } from "./interfaces-n-types";
+import {
+  IPaperConfig,
+  IMargin,
+  PaperUnit,
+  IWidthAndHeight,
+  IImageConfig,
+} from "./interfaces-n-types";
 
 const unitRelations = {
   mm: {
@@ -17,6 +23,19 @@ const unitRelations = {
     in: 1,
   },
 };
+
+export function getIImageSizesInIPaperUnits(
+  imageConfig: IImageConfig,
+  paperConfig: IPaperConfig
+): IWidthAndHeight {
+  const imageWidthInPaperUnits = changeUnit(imageConfig.width, imageConfig.unit, paperConfig.unit);
+  const imageHeightInPaperUnits = changeUnit(
+    imageConfig.height,
+    imageConfig.unit,
+    paperConfig.unit
+  );
+  return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
+}
 
 export class PaperConfig implements IPaperConfig {
   public readonly margin: IMargin;

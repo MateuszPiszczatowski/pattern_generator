@@ -76,7 +76,12 @@ function App() {
           }
         }}>
         {imageConfig && isPrintingViewEnabled && (
-          <PrintSplitter imageConfig={imageConfig} paperConfig={paperConfig} />
+          <PrintSplitter
+            printGuidePage={true}
+            printSizesTest={true}
+            imageConfig={imageConfig}
+            paperConfig={paperConfig}
+          />
         )}
       </section>
 
