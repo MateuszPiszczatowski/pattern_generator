@@ -1,13 +1,18 @@
 .Form {
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 0.2em;
   gap: 0.2em;
-  box-shadow: inset 0.1em 0.1em 0.2em -0.1em rgb(200, 200, 200);
+}
+
+.Checkbox {
+  margin-left: 0.4em;
 }
 
 .Label {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   &:last-of-type {
@@ -21,4 +26,8 @@
 
 .TextOrNumberInput {
   width: 3em;
+}
+
+.Submit {
+  width: fit-content;
 }

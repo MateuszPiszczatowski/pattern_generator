@@ -1,13 +1,84 @@
 @use "../../utils/variables";
-.Header {
-  font-size: 1em;
-  margin: 0.2em 0;
-}
-.InfoTable {
-  padding-left: variables.$leftDistance;
-}
-.Label {
-  margin-left: variables.$leftDistance;
+.Section {
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1em;
+}
+.SectionContent {
+  width: variables.$width;
+  @media (min-width: variables.$fullWidth) {
+    width: variables.$fullWidth;
+  }
+}
+.Heading2 {
+  font-size: 1.3em;
+  padding: 0.4em 0;
+}
+.Heading3 {
+  font-size: 1em;
+  padding: 0.2em 0;
+}
+
+.TablePositioner {
+  padding-left: variables.$leftDistance;
+  @media (min-width: variables.$fullWidth) {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.InfoTable {
+  $border: 1px solid rgba(0, 0, 0, 0.2);
+  border-collapse: collapse;
+  display: flex;
+  & tr {
+    display: flex;
+    flex-direction: column;
+  }
+  & th,
+  & td {
+    border: $border;
+    border-top: none;
+    border-right: none;
+    padding: 0.2em;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  & th {
+    font-size: 0.8em;
+    font-weight: 700;
+    text-shadow: 1px 1px black, 1px -1px black, -1px 1px black, -1px -1px black, 0 1px black,
+      1px 0 black, -1px 0 black, 0 -1px black;
+    color: white;
+  }
+  & td {
+    font-size: 0.8em;
+    text-align: right;
+    &:first-child {
+      text-align: center;
+    }
+  }
+  @media (min-width: 40em) {
+    display: table;
+    & tr {
+      display: table-row;
+    }
+    & th:last-child {
+      border-bottom: $border;
+    }
+    & td {
+      border-bottom: none;
+    }
+  }
+}
+
+.Label {
+  display: flex;
+  height: 2em;
+  align-items: center;
   gap: 0.5em;
 }

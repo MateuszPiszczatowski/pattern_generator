@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useState } from "react";
 import patternsConfiguratorsList from "../../SewingPatternsConfigurators/patternsConfiguratorsList";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
@@ -7,10 +7,7 @@ import { nanoid } from "nanoid";
 export default function PatternsBrowser({ setImageConfig }: IPatternsBrowserProps) {
   const [filter, setFilter] = useState("");
   const [patternName, setPatternName] = useState("");
-  const formContainerRef = useRef(null as null | HTMLDivElement);
-  const [formContainerChildren, setFormContainerChildren] = useState(
-    null as ReactNode | ReactNode[]
-  );
+  const [formElement, setFormElement] = useState(null as ReactNode | ReactNode[]);
   function onFilterChange(e: ChangeEvent<HTMLInputElement>) {
     setFilter(e.currentTarget.value);
   }
@@ -28,19 +25,17 @@ export default function PatternsBrowser({ setImageConfig }: IPatternsBrowserProp
           .map((configurator) => (
             <PatternOption
               patternConfigurator={configurator}
-              setFormContainerChildren={setFormContainerChildren}
+              setFormElement={setFormElement}
               setImageConfig={setImageConfig}
               setPattern={setPatternName}
               key={nanoid()}
             />
           ))}
       </div>
-      {formContainerChildren && (
+      {formElement && (
         <>
           <h3 className={css.Heading3}>Current pattern: {patternName}</h3>
-          <div className={css.FormContainer} ref={formContainerRef}>
-            {formContainerChildren}
-          </div>
+          {formElement}
         </>
       )}
     </>

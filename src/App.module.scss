@@ -1,3 +1,4 @@
+@use "./utils/variables";
 .Section {
   width: 100%;
   display: flex;
@@ -7,9 +8,13 @@
 }
 
 .Title {
-  width: 80%;
-  margin: 1vh 0 0;
-  padding: 0 0 0 15%;
+  text-align: right;
+  $rightPadding: calc(50% + (variables.$width / 3));
+  padding: 0.2em $rightPadding 0.2em variables.$leftDistance;
+  @media (min-width: variables.$fullWidth) {
+    $rightPadding: calc(50% + (variables.$fullWidth / 3));
+    padding: 0.2em $rightPadding 0.2em variables.$leftDistance;
+  }
 }
 
 .Header {
@@ -18,5 +23,12 @@
   font-family: "Courier", Courier, monospace;
   & > h1 {
     margin: 0;
+  }
+}
+
+.NoPrint {
+  @media print {
+    display: none;
+    visibility: hidden;
   }
 }

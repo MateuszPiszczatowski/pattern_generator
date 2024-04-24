@@ -9,6 +9,13 @@ body {
   padding: 0 0 3em;
   background-color: #fed8f1;
 }
+
+@media print {
+  body {
+    padding: 0;
+  }
+}
+
 #root {
   width: 100%;
   margin: 0 0;

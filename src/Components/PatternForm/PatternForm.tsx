@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode } from "react";
+import { FormEvent } from "react";
 import { IImageConfig, IPatternConfigurator, PaperUnit } from "../../utils/interfaces-n-types";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import css from "./PatternForm.module.scss";
@@ -61,6 +61,7 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
             <label htmlFor={select} className={css.Label}>
               {patternConfigurator.selects[select].message}:
               <input
+                className={css.Checkbox}
                 type="checkbox"
                 name={select}
                 defaultChecked={patternConfigurator.selects[select].default}
@@ -68,7 +69,7 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
             </label>
           );
         })}
-        <input type="submit" value="Save pattern" />
+        <input className={css.Submit} type="submit" value="Save pattern" />
       </form>
     </div>
   );
@@ -76,6 +77,5 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
 
 interface IPatternFormProps {
   patternConfigurator: IPatternConfigurator;
-  setModalChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
 }

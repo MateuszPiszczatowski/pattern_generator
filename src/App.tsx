@@ -1,3 +1,4 @@
+import { Notify } from "notiflix/build/notiflix-notify-aio";
 import PrintSplitter from "./Components/PrintSplitter/PrintSplitter";
 import css from "./App.module.scss";
 import * as paperUtils from "./utils/paperUtils";
@@ -8,6 +9,7 @@ import PatternSetter from "./Components/PatternSetter/PatternSetter";
 import FormatSetter from "./Components/FormatSetter/FormatSetter";
 
 function App() {
+  Notify.init({ showOnlyTheLastOne: true });
   const modalTabIndex = 1;
   const printingSectionTabIndex = 2;
   const printingSectionRef = useRef(null as null | HTMLDivElement);
@@ -45,6 +47,10 @@ function App() {
           <button
             disabled={!imageConfig}
             onClick={() => {
+              Notify.info("Press ESC to exit printing view.", {
+                timeout: 5000,
+                className: css.NoPrint,
+              });
               setIsPrintingViewEnabled(true);
               setIsBackgroundColored(false);
             }}>

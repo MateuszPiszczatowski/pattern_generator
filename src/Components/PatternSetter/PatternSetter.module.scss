@@ -1,6 +1,9 @@
 @use "../../utils/variables";
 .SectionContent {
   width: variables.$width;
+  @media (min-width: variables.$fullWidth) {
+    width: variables.$fullWidth;
+  }
 }
 .Section {
   width: 100%;
@@ -12,6 +15,5 @@
 
 .Heading2 {
   font-size: 1.3em;
-  margin: 0;
   padding: 0.4em 0;
 }

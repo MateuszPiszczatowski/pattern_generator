@@ -5,7 +5,7 @@ import css from "./PatternOption.module.scss";
 
 export default function PatternOption({
   patternConfigurator,
-  setFormContainerChildren,
+  setFormElement,
   setImageConfig,
   setPattern,
 }: IPatternOptionProps) {
@@ -13,12 +13,8 @@ export default function PatternOption({
     <button
       onClick={() => {
         setPattern(patternConfigurator.title);
-        setFormContainerChildren(
-          <PatternForm
-            patternConfigurator={patternConfigurator}
-            setModalChildren={setFormContainerChildren}
-            setImageConfig={setImageConfig}
-          />
+        setFormElement(
+          <PatternForm patternConfigurator={patternConfigurator} setImageConfig={setImageConfig} />
         );
       }}>
       <figure className={css.Figure}>
@@ -31,7 +27,7 @@ export default function PatternOption({
 
 interface IPatternOptionProps {
   patternConfigurator: IPatternConfigurator;
-  setFormContainerChildren: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
+  setFormElement: React.Dispatch<React.SetStateAction<ReactNode[] | ReactNode>>;
   setImageConfig: React.Dispatch<React.SetStateAction<IImageConfig | null>>;
   setPattern: React.Dispatch<React.SetStateAction<string>>;
 }
