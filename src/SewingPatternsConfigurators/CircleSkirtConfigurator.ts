@@ -32,7 +32,7 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
           degrees: this.positions.degrees.value!,
           lineWidth: this.positions.lineWidth.value!,
           skirtLength: this.positions.skirtLength.value!,
-          waist: this.positions.skirtLength.value!,
+          waist: this.positions.waist.value!,
         },
         { isHalved: this.selects.isHalved.value!, shouldRepeat: this.selects.shouldRepeat.value! }
       );
