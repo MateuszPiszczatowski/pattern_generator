@@ -1,7 +1,7 @@
 import { FormEvent, useRef } from "react";
 import { IPaperConfig, PaperUnit } from "../../utils/interfaces-n-types";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
-import { PaperConfig, changeUnit } from "../../utils/paperUtils";
+import { PaperConfig } from "../../utils/paperUtils";
 import css from "./FormatForm.module.scss";
 
 export default function FormatForm({
