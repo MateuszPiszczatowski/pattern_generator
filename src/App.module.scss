@@ -32,3 +32,15 @@
     visibility: hidden;
   }
 }
+
+.BackButton {
+  @media print {
+    display: none;
+    visibility: hidden;
+  }
+  font-size: 1rem;
+  padding: 0.3em;
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+}

@@ -17,7 +17,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
   private readonly spacing;
   private readonly partialAngle;
   private readonly isHalved;
-  private readonly shouldRepeat;
+  private readonly shouldReduce;
   private readonly lineWidth;
   constructor(
     {
@@ -26,9 +26,9 @@ export default class CircleSkirtPattern implements ISewingPatter {
       degrees,
       lineWidth,
     }: { skirtLength: number; waist: number; degrees: number; lineWidth: number },
-    { isHalved, shouldRepeat }: { isHalved: boolean; shouldRepeat: boolean } = {
+    { isHalved, shouldReduce }: { isHalved: boolean; shouldReduce: boolean } = {
       isHalved: true,
-      shouldRepeat: false,
+      shouldReduce: true,
     }
   ) {
     this.lineWidth = lineWidth;
@@ -36,7 +36,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
     this.waist = waist * sizesFactor;
     this.degrees = degrees;
     this.isHalved = isHalved;
-    this.shouldRepeat = shouldRepeat;
+    this.shouldReduce = shouldReduce;
     this.fullCirclesCount = Math.floor(degrees / 360);
     this.partialAngle = this.getPartialAngle();
     this.waistRadius = this.getWaistRadius();
@@ -49,7 +49,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
     this.appendFullCircles();
     this.appendPartial(
       this.getYAxisMod(
-        this.shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount)
+        this.shouldReduce ? Math.min(1, this.fullCirclesCount) : this.fullCirclesCount
       )
     );
   }
@@ -71,9 +71,9 @@ export default class CircleSkirtPattern implements ISewingPatter {
   }
 
   private calcHeight() {
-    const fullCirclesCount = this.shouldRepeat
-      ? this.fullCirclesCount
-      : Math.min(this.fullCirclesCount, 1);
+    const fullCirclesCount = this.shouldReduce
+      ? Math.min(this.fullCirclesCount, 1)
+      : this.fullCirclesCount;
     return (
       fullCirclesCount * this.fullRadius * (this.isHalved ? 1 : 2) +
       fullCirclesCount * this.spacing * 2 +
@@ -290,12 +290,12 @@ export default class CircleSkirtPattern implements ISewingPatter {
   private appendFullCircles() {
     const svg = this.svg;
     const isHalved = this.isHalved;
-    const count = this.shouldRepeat ? this.fullCirclesCount : Math.min(1, this.fullCirclesCount);
+    const count = this.shouldReduce ? Math.min(1, this.fullCirclesCount) : this.fullCirclesCount;
     if (isHalved) {
       for (let i = 0; i < count; i++) {
         svg.append(...this.getCircleSectorPart(180, this.getYAxisMod(i)));
       }
-      if (!this.shouldRepeat && this.fullCirclesCount > 1) {
+      if (this.shouldReduce && this.fullCirclesCount > 1) {
         svg.appendChild(this.getMultiplicatorSign());
       }
     } else {
@@ -303,7 +303,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
         svg.appendChild(this.getInnerCircle(this.getYAxisMod(i)));
         svg.appendChild(this.getOuterCircle(this.getYAxisMod(i)));
       }
-      if (!this.shouldRepeat && this.fullCirclesCount > 1) {
+      if (this.shouldReduce && this.fullCirclesCount > 1) {
         svg.appendChild(this.getMultiplicatorSign());
       }
     }

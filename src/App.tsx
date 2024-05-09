@@ -21,6 +21,12 @@ function App() {
   const [modalContent, setModalContent] = useState(null as ReactNode);
   const [isModalEnabled, setIsModalEnabled] = useState(false);
   const [isBackgroundColored, setIsBackgroundColored] = useState(true);
+  function disablePrintingView() {
+    const notify = document.querySelector(`.a${notifyClass}`);
+    notify?.parentElement?.removeChild(notify);
+    setIsBackgroundColored(true);
+    setIsPrintingViewEnabled(false);
+  }
   useEffect(() => {
     const bodyElem = document.querySelector("body");
     if (bodyElem)
@@ -69,20 +75,22 @@ function App() {
         hidden={!isPrintingViewEnabled}
         onKeyDown={(e) => {
           if (e.key === "Escape") {
-            const notify = document.querySelector(`.a${notifyClass}`);
-            notify?.parentElement?.removeChild(notify);
-            setIsBackgroundColored(true);
-            setIsPrintingViewEnabled(false);
+            disablePrintingView();
           }
         }}>
         {imageConfig && isPrintingViewEnabled && (
-          <PrintSplitter
-            helperView={false}
-            printGuidePage={true}
-            printSizesHelper={true}
-            imageConfig={imageConfig}
-            paperConfig={paperConfig}
-          />
+          <>
+            <button className={css.BackButton} onClick={disablePrintingView}>
+              Back
+            </button>
+            <PrintSplitter
+              helperView={false}
+              printGuidePage={true}
+              printSizesHelper={true}
+              imageConfig={imageConfig}
+              paperConfig={paperConfig}
+            />
+          </>
         )}
       </section>
 

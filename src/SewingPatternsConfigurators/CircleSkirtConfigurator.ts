@@ -18,10 +18,9 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
       message: "Should symetric elemnts be halved?",
       default: true,
     },
-    shouldRepeat: {
-      message:
-        "Should print each repeating element (disable to only show how many elements should be cut out)",
-      default: false,
+    shouldReduce: {
+      message: "Reduce repeating elements to one with a counter?",
+      default: true,
     },
   };
 
@@ -34,7 +33,7 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
           skirtLength: this.positions.skirtLength.value!,
           waist: this.positions.waist.value!,
         },
-        { isHalved: this.selects.isHalved.value!, shouldRepeat: this.selects.shouldRepeat.value! }
+        { isHalved: this.selects.isHalved.value!, shouldReduce: this.selects.shouldReduce.value! }
       );
     throw new Error("Configuration is not ready!");
   }
