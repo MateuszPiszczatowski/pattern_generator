@@ -51,7 +51,7 @@ function App() {
             onClick={() => {
               Notify.info("Press ESC to exit printing view.", {
                 timeout: 5000,
-                className: css.NoPrint.concat(" ", notifyClass),
+                className: css.NoPrint.concat(" a", notifyClass),
               });
               setIsPrintingViewEnabled(true);
               setIsBackgroundColored(false);
@@ -69,7 +69,7 @@ function App() {
         hidden={!isPrintingViewEnabled}
         onKeyDown={(e) => {
           if (e.key === "Escape") {
-            const notify = document.querySelector(`.${notifyClass}`);
+            const notify = document.querySelector(`.a${notifyClass}`);
             notify?.parentElement?.removeChild(notify);
             setIsBackgroundColored(true);
             setIsPrintingViewEnabled(false);
@@ -77,8 +77,9 @@ function App() {
         }}>
         {imageConfig && isPrintingViewEnabled && (
           <PrintSplitter
+            helperView={false}
             printGuidePage={true}
-            printSizesTest={true}
+            printSizesHelper={true}
             imageConfig={imageConfig}
             paperConfig={paperConfig}
           />

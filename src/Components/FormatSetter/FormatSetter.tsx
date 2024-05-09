@@ -1,6 +1,6 @@
 import * as paperUtils from "../../utils/paperUtils";
 import { IPaperConfig } from "../../utils/interfaces-n-types";
-import { ChangeEvent, ReactNode, useRef } from "react";
+import { ChangeEvent, ReactNode, useReducer, useRef } from "react";
 import FormatForm from "../FormatForm/FormatForm";
 import css from "./FormatSetter.module.scss";
 
@@ -10,20 +10,26 @@ export default function FormatSetter({
   setIsModalEnabled,
   setModalChildren,
 }: IFormatSetterProps) {
-  function openCustomMarginEdit() {
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  function openSetFormatModal() {
     setModalChildren([
-      <FormatForm setPaperConfig={setPaperConfig} setIsModalEnabled={setIsModalEnabled} />,
+      <FormatForm
+        currentPaperConfig={paperConfig}
+        setPaperConfig={setPaperConfig}
+        setIsModalEnabled={setIsModalEnabled}
+      />,
     ]);
     setIsModalEnabled(true);
   }
   const formatSelectRef = useRef(null as null | HTMLSelectElement);
-  const customMargins = (e: ChangeEvent<HTMLSelectElement>) => {
+  const setFormat = (e: ChangeEvent<HTMLSelectElement>) => {
     const option = e.currentTarget.value;
     if (option !== "custom") {
       setPaperConfig(paperUtils.DefaultSizes[option]);
     } else {
-      openCustomMarginEdit();
+      openSetFormatModal();
     }
+    forceUpdate();
   };
 
   return (
@@ -59,7 +65,7 @@ export default function FormatSetter({
         </div>
         <label className={css.Label} htmlFor="paperFormat">
           Select paper format:
-          <select ref={formatSelectRef} onChange={customMargins}>
+          <select ref={formatSelectRef} onChange={setFormat}>
             {Object.keys(paperUtils.DefaultSizes).map((key) => {
               return (
                 <option value={key} key={key}>
@@ -70,7 +76,7 @@ export default function FormatSetter({
             <option value="custom">Custom</option>
           </select>
           {formatSelectRef.current?.value === "custom" && (
-            <button className={css.Button} onClick={openCustomMarginEdit}>
+            <button className={css.Button} onClick={openSetFormatModal}>
               Edit
             </button>
           )}

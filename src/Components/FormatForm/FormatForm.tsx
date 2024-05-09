@@ -4,7 +4,11 @@ import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import { PaperConfig } from "../../utils/paperUtils";
 import css from "./FormatForm.module.scss";
 
-export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IFormatFormProps) {
+export default function FormatForm({
+  currentPaperConfig,
+  setPaperConfig,
+  setIsModalEnabled,
+}: IPaperFormProps) {
   const formRef = useRef(null as null | HTMLFormElement);
   const onCancel = () => {
     formRef.current!.reset();
@@ -40,39 +44,59 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className={css.Form}>
-      <LabeledUnitSelect />
+      <LabeledUnitSelect defaultUnit={currentPaperConfig?.unit ?? "cm"} />
       <label htmlFor="width" className={css.Label}>
-        Width: <input name="width" type="number" defaultValue={10} />
+        Width: <input name="width" type="number" defaultValue={currentPaperConfig?.width ?? 10} />
       </label>
       <label htmlFor="height" className={css.Label}>
-        Height: <input name="height" type="number" defaultValue={10} />
+        Height:{" "}
+        <input name="height" type="number" defaultValue={currentPaperConfig?.height ?? 10} />
       </label>
       <label className={css.Label}>
         Should print helping borders:
-        <input name="helpingBorders" type="checkbox" defaultChecked={true} />
+        <input
+          name="helpingBorders"
+          type="checkbox"
+          defaultChecked={currentPaperConfig?.helpingBorders ?? true}
+        />
       </label>
       <label className={css.Label}>
         Should print helping cornes:
-        <input name="helpingCorners" type="checkbox" defaultChecked={true} />
+        <input
+          name="helpingCorners"
+          type="checkbox"
+          defaultChecked={currentPaperConfig?.helpingCorners ?? true}
+        />
       </label>
       <label className={css.Label}>
         Should print page number:
-        <input name="pagesCounter" type="checkbox" defaultChecked={true} />
+        <input
+          name="pagesCounter"
+          type="checkbox"
+          defaultChecked={currentPaperConfig?.pagesCounter ?? true}
+        />
       </label>
       <label></label>
       <h3 className={css.Header}>Margins:</h3>
       <section className={css.MarginSection}>
         <label htmlFor="top" className={css.Label}>
-          Top: <input name="top" type="number" defaultValue={1} />
+          Top: <input name="top" type="number" defaultValue={currentPaperConfig?.margin.top ?? 1} />
         </label>
         <label htmlFor="right" className={css.Label}>
-          Right: <input name="right" type="number" defaultValue={1} />
+          Right:{" "}
+          <input name="right" type="number" defaultValue={currentPaperConfig?.margin.right ?? 1} />
         </label>
         <label htmlFor="bottom" className={css.Label}>
-          Bottom: <input name="bottom" type="number" defaultValue={1} />
+          Bottom:{" "}
+          <input
+            name="bottom"
+            type="number"
+            defaultValue={currentPaperConfig?.margin.bottom ?? 1}
+          />
         </label>
         <label htmlFor="left" className={css.Label}>
-          Left: <input name="left" type="number" defaultValue={1} />
+          Left:{" "}
+          <input name="left" type="number" defaultValue={currentPaperConfig?.margin.left ?? 1} />
         </label>
       </section>
       <div className={css.ButtonsContainer}>
@@ -85,7 +109,8 @@ export default function FormatForm({ setPaperConfig, setIsModalEnabled }: IForma
   );
 }
 
-interface IFormatFormProps {
+interface IPaperFormProps {
+  currentPaperConfig: IPaperConfig;
   setPaperConfig: React.Dispatch<React.SetStateAction<IPaperConfig>>;
   setIsModalEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }

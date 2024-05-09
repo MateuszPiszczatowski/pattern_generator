@@ -12,7 +12,9 @@ import {
 } from "react";
 import CanvasPage from "../CanvasPage/CanvasPage";
 import { IWidthAndHeight } from "../../utils/interfaces-n-types";
-import HelpingPage from "../HelpingPage/HelpingPage";
+import GuidePage from "../GuidePage/GuidePage";
+import { nanoid } from "nanoid";
+import SizesHelper from "../SizesHelper/SizesHelper";
 
 function getCanvasDrawWidth(height: number, margin: IMargin): number {
   return height - (margin.left + margin.right);
@@ -35,8 +37,8 @@ function getCanvasDrawSizes(canvasConfig: {
 
 function getCanvasCountForOneDimension(paperDrawSize: number, imageSize: number): number {
   const count = imageSize / paperDrawSize;
-  const roundedCount = Math.round(count);
-  return count > roundedCount ? roundedCount + 1 : roundedCount;
+  const roundedCount = Math.ceil(count);
+  return roundedCount;
 }
 
 function getCanvasPagesCount(
@@ -81,7 +83,8 @@ function onImageLoad(
   cols: number,
   rows: number,
   setPagesState: Dispatch<SetStateAction<ReactNode[]>>,
-  helpingPage?: JSX.Element
+  helpingPage?: JSX.Element,
+  sizingPage?: JSX.Element
 ): void {
   const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
   const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
@@ -91,6 +94,9 @@ function onImageLoad(
   });
   const imageDrawSizes = getImageDrawSizes(canvasDrawSizes, imageElem);
   const pages: JSX.Element[] = [];
+  if (sizingPage) {
+    pages.push(sizingPage);
+  }
   if (helpingPage) {
     pages.push(helpingPage);
   }
@@ -113,6 +119,7 @@ function onImageLoad(
               isTop: row === 0,
             },
           }}
+          key={nanoid()}
         />
       );
       setPagesState(pages);
@@ -122,7 +129,7 @@ function onImageLoad(
 
 const PrintSplitter = ({
   printGuidePage,
-  printSizesTest,
+  printSizesHelper,
   imageConfig,
   paperConfig,
   helperView,
@@ -162,25 +169,23 @@ const PrintSplitter = ({
         cols,
         rows,
         setPages,
-        printGuidePage || printSizesTest ? (
-          <HelpingPage
-            paperConfig={paperConfigToUse}
-            printGuidePage={printGuidePage}
-            printSizesTest={printSizesTest}
-            imageConfig={imageConfig}
-          />
-        ) : undefined
+        printGuidePage ? (
+          <GuidePage paperConfig={paperConfigToUse} imageConfig={imageConfig} key={nanoid()} />
+        ) : undefined,
+        printSizesHelper ? <SizesHelper paperConfig={paperConfigToUse} key={nanoid()} /> : undefined
       );
+      imageElem.style.visibility = "hidden";
+      imageElem.style.display = "none";
     };
     imageElem.src = imageConfig.source;
-  }, [cols, imageConfig, paperConfig, paperConfigToUse, printGuidePage, printSizesTest, rows]);
+  }, [cols, imageConfig, paperConfig, paperConfigToUse, printGuidePage, printSizesHelper, rows]);
   return (
     <>
       <div
         ref={canvasSizingHelper}
         style={{
           position: "absolute",
-          left: `-${paperConfigToUse.width}${paperConfigToUse.unit}`,
+          left: `-${100 * (paperConfigToUse.width + imageConfig.width)}${paperConfigToUse.unit}`,
           width: `${paperConfigToUse.width}${paperConfigToUse.unit}`,
           height: `${paperConfigToUse.height}${paperConfigToUse.unit}`,
         }}
@@ -189,7 +194,7 @@ const PrintSplitter = ({
         ref={imageRef}
         style={{
           position: "absolute",
-          left: `-${imageConfig.width}${imageConfig.unit}`,
+          left: `-${100 * (imageConfig.width + paperConfigToUse.width)}${imageConfig.unit}`,
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
@@ -198,16 +203,16 @@ const PrintSplitter = ({
           display: "flex",
           flexDirection: helperView ? "row" : "column",
           flexWrap: helperView ? "wrap" : "nowrap",
-          width: helperView ? `${cols * paperConfigToUse.width}${paperConfig.unit}` : "100%",
+          width: helperView ? `${1.01 * cols * paperConfigToUse.width}${paperConfig.unit}` : "100%",
         }}>
-        {...pages}
+        {pages}
       </article>
     </>
   );
 };
 
 interface IPrintSplitterProps {
-  printSizesTest: boolean;
+  printSizesHelper: boolean;
   printGuidePage: boolean;
   helperView: boolean;
   imageConfig: IImageConfig;
