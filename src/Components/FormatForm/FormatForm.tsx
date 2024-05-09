@@ -1,7 +1,7 @@
 import { FormEvent, useRef } from "react";
 import { IPaperConfig, PaperUnit } from "../../utils/interfaces-n-types";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
-import { PaperConfig } from "../../utils/paperUtils";
+import { PaperConfig, changeUnit } from "../../utils/paperUtils";
 import css from "./FormatForm.module.scss";
 
 export default function FormatForm({
@@ -32,25 +32,42 @@ export default function FormatForm({
       }
     );
     if (
-      paperConfig.height > paperConfig.margin.top + paperConfig.margin.bottom &&
-      paperConfig.width > paperConfig.margin.left + paperConfig.margin.right
+      paperConfig.height < 0 ||
+      paperConfig.width < 0 ||
+      paperConfig.margin.top < 0 ||
+      paperConfig.margin.bottom < 0 ||
+      paperConfig.margin.left < 0 ||
+      paperConfig.margin.right < 0
     ) {
-      setPaperConfig(paperConfig);
-      setIsModalEnabled(false);
-    } else {
-      window.alert("Margins can`t be bigger than the whole page itself!");
+      window.alert("Sizes cannot be negative.");
+      return;
     }
+    if (
+      paperConfig.height < paperConfig.margin.top + paperConfig.margin.bottom ||
+      paperConfig.width < paperConfig.margin.left + paperConfig.margin.right
+    ) {
+      window.alert("Margin must be less than height and width.");
+      return;
+    }
+    setPaperConfig(paperConfig);
+    setIsModalEnabled(false);
   };
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className={css.Form}>
       <LabeledUnitSelect defaultUnit={currentPaperConfig?.unit ?? "cm"} />
       <label htmlFor="width" className={css.Label}>
-        Width: <input name="width" type="number" defaultValue={currentPaperConfig?.width ?? 10} />
+        Width:{" "}
+        <input name="width" type="number" min={0} defaultValue={currentPaperConfig?.width ?? 10} />
       </label>
       <label htmlFor="height" className={css.Label}>
         Height:{" "}
-        <input name="height" type="number" defaultValue={currentPaperConfig?.height ?? 10} />
+        <input
+          name="height"
+          type="number"
+          min={0}
+          defaultValue={currentPaperConfig?.height ?? 10}
+        />
       </label>
       <label className={css.Label}>
         Should print helping borders:
@@ -80,23 +97,40 @@ export default function FormatForm({
       <h3 className={css.Header}>Margins:</h3>
       <section className={css.MarginSection}>
         <label htmlFor="top" className={css.Label}>
-          Top: <input name="top" type="number" defaultValue={currentPaperConfig?.margin.top ?? 1} />
+          Top:{" "}
+          <input
+            name="top"
+            type="number"
+            min={0}
+            defaultValue={currentPaperConfig?.margin.top ?? 1}
+          />
         </label>
         <label htmlFor="right" className={css.Label}>
           Right:{" "}
-          <input name="right" type="number" defaultValue={currentPaperConfig?.margin.right ?? 1} />
+          <input
+            name="right"
+            type="number"
+            min={0}
+            defaultValue={currentPaperConfig?.margin.right ?? 1}
+          />
         </label>
         <label htmlFor="bottom" className={css.Label}>
           Bottom:{" "}
           <input
             name="bottom"
             type="number"
+            min={0}
             defaultValue={currentPaperConfig?.margin.bottom ?? 1}
           />
         </label>
         <label htmlFor="left" className={css.Label}>
           Left:{" "}
-          <input name="left" type="number" defaultValue={currentPaperConfig?.margin.left ?? 1} />
+          <input
+            name="left"
+            type="number"
+            min={0}
+            defaultValue={currentPaperConfig?.margin.left ?? 1}
+          />
         </label>
       </section>
       <div className={css.ButtonsContainer}>
