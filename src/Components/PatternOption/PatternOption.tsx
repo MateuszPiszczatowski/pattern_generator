@@ -18,7 +18,7 @@ export default function PatternOption({
         );
       }}>
       <figure className={css.Figure}>
-        <img src={patternConfigurator.picture}></img>
+        <img src={patternConfigurator.picture} className={css.Image}></img>
         <figcaption>{patternConfigurator.title}</figcaption>
       </figure>
     </button>

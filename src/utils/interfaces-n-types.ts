@@ -4,11 +4,12 @@ export interface IWidthAndHeight {
 }
 
 export interface IImageConfig {
-  source: string;
+  source: string; // it can be a path or a data-url
   width: number;
   height: number;
   unit: PaperUnit;
 }
+
 export interface IMargin {
   left: number;
   top: number;
@@ -26,6 +27,7 @@ export interface IPaperConfig {
   pagesCounter: boolean;
   getWithChangedOrientation: () => IPaperConfig;
 }
+
 export type PaperUnit = "mm" | "cm" | "in";
 
 export interface ISewingPatter {
