@@ -6,6 +6,7 @@ import {
   IImageConfig,
 } from "./interfaces-n-types";
 
+// Relations between defined units.
 const unitRelations = {
   mm: {
     mm: 1,
@@ -24,6 +25,9 @@ const unitRelations = {
   },
 };
 
+/* Function that takes imageConfig and paperConfig and returns image sizes in the same units as the paper is set in.
+ * The purpose is for the user to convienently pass both configs as attributes rather than tinkering with getting all the needed info themself.
+ */
 export function getIImageSizesInIPaperUnits(
   imageConfig: IImageConfig,
   paperConfig: IPaperConfig
@@ -37,6 +41,7 @@ export function getIImageSizesInIPaperUnits(
   return { width: imageWidthInPaperUnits, height: imageHeightInPaperUnits };
 }
 
+// Class for a paper printing configuration.
 export class PaperConfig implements IPaperConfig {
   public readonly margin: IMargin;
 
@@ -56,6 +61,7 @@ export class PaperConfig implements IPaperConfig {
     } else this.margin = this.getDefaultMargin();
   }
 
+  // Change the orientation of the paper so the top is on the left.
   public getWithChangedOrientation() {
     const reorientedPaperConfig = new PaperConfig(
       this.unit,
@@ -74,6 +80,7 @@ export class PaperConfig implements IPaperConfig {
     return reorientedPaperConfig;
   }
 
+  // Set default margin to all 0.
   private getDefaultMargin(): IMargin {
     return {
       top: 0,
@@ -84,6 +91,7 @@ export class PaperConfig implements IPaperConfig {
   }
 }
 
+// Default margins for default sizes.
 const defaultMargins = {
   mm: {
     top: 10,
@@ -99,6 +107,7 @@ const defaultMargins = {
   },
 };
 
+// Commonly used sizes are predefined here.
 export const DefaultSizes: { [key: string]: PaperConfig } = {
   a4: new PaperConfig("mm", 210, 297, true, true, true, defaultMargins.mm),
   a3: new PaperConfig("mm", 297, 420, true, true, true, defaultMargins.mm),
@@ -108,6 +117,7 @@ export const DefaultSizes: { [key: string]: PaperConfig } = {
   tabloid: new PaperConfig("in", 11, 17, true, true, true, defaultMargins.in),
 };
 
+// Converts the number according to base and target units.
 export function changeUnit(number: number, numberUnit: PaperUnit, toUnit: PaperUnit) {
   return number * unitRelations[numberUnit][toUnit];
 }
