@@ -59,8 +59,8 @@ export interface IPatternConfigurator {
   picture: string;
   positions: { [key: string]: { message: string; default: number; value?: number } };
   selects: { [key: string]: { message: string; default: boolean; value?: boolean } };
-  lackingPositions: () => string[];
-  lackingSelects: () => string[];
+  getLackingPositions: () => string[];
+  getLackingSelects: () => string[];
   setPosition: (name: string, value: number) => void;
   setSelect: (name: string, value: boolean) => void;
   isReady: () => boolean;

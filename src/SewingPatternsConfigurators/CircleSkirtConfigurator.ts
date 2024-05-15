@@ -2,6 +2,7 @@ import CircleSkirtPattern from "../SewingPatterns/CircleSkirt";
 import BaseConfigurator from "./BaseConfigurator";
 export default class CircleSkirtConfigurator extends BaseConfigurator {
   public readonly title = "Circle Skirt";
+  // The picture of the pattern is created with the same pattern with example values
   public readonly picture = new CircleSkirtPattern(
     { skirtLength: 10, waist: 10, degrees: 540, lineWidth: 0.25 },
     { isHalved: false, shouldReduce: false }
@@ -27,6 +28,7 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
     },
   };
 
+  // Returns CircleSkirtPattern as ISewingPattern (look at abstract definition in base configurator)
   getPattern() {
     if (this.isReady())
       return new CircleSkirtPattern(
@@ -40,6 +42,8 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
       );
     throw new Error("Configuration is not ready!");
   }
+
+  // This pattern overrides the unready messages with its specific validation checks.
   public override isReady() {
     let result = super.isReady();
     if (result) {
@@ -53,6 +57,7 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
     return false;
   }
 
+  // This pattern overrides the unready messages according to its specific validation checks
   public override getUnreadyMessages() {
     const messages = super.getUnreadyMessages();
     const positionsWithTooLowValues: string[] = [];
