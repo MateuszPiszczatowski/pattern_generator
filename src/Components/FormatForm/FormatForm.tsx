@@ -4,16 +4,19 @@ import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import { PaperConfig } from "../../utils/paperUtils";
 import css from "./FormatForm.module.scss";
 
+// Component for setting custom paper format.
 export default function FormatForm({
   currentPaperConfig,
   setPaperConfig,
   setIsModalEnabled,
 }: IPaperFormProps) {
   const formRef = useRef(null as null | HTMLFormElement);
+  // On cancel reset the form and hide modal.
   const onCancel = () => {
     formRef.current!.reset();
     setIsModalEnabled(false);
   };
+  // On submit create a proper paper configuration
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const values = e.currentTarget.elements;
@@ -31,6 +34,7 @@ export default function FormatForm({
         right: Number((values.namedItem("right") as HTMLInputElement).value),
       }
     );
+    // If user used negative numbers notify them that they can't do so
     if (
       paperConfig.height < 0 ||
       paperConfig.width < 0 ||
@@ -42,6 +46,7 @@ export default function FormatForm({
       window.alert("Sizes cannot be negative.");
       return;
     }
+    // If user used margins that are not smaller than the whole page, notify them that they can't do so
     if (
       paperConfig.height < paperConfig.margin.top + paperConfig.margin.bottom ||
       paperConfig.width < paperConfig.margin.left + paperConfig.margin.right
