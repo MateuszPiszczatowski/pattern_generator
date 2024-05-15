@@ -3,7 +3,7 @@ import { IPaperConfig, PaperUnit } from "../../utils/interfaces-n-types";
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import { PaperConfig } from "../../utils/paperUtils";
 import css from "./FormatForm.module.scss";
-
+import { nanoid } from "nanoid";
 // Component for setting custom paper format.
 export default function FormatForm({
   currentPaperConfig,
@@ -63,7 +63,14 @@ export default function FormatForm({
       <LabeledUnitSelect defaultUnit={currentPaperConfig?.unit ?? "cm"} />
       <label htmlFor="width" className={css.Label}>
         Width:{" "}
-        <input name="width" type="number" min={0} defaultValue={currentPaperConfig?.width ?? 10} />
+        <input
+          name="width"
+          type="number"
+          step={0.01}
+          min={0}
+          key={nanoid()}
+          defaultValue={currentPaperConfig?.width ?? 10}
+        />
       </label>
       <label htmlFor="height" className={css.Label}>
         Height:{" "}
@@ -71,6 +78,8 @@ export default function FormatForm({
           name="height"
           type="number"
           min={0}
+          step={0.01}
+          key={nanoid()}
           defaultValue={currentPaperConfig?.height ?? 10}
         />
       </label>
@@ -79,6 +88,7 @@ export default function FormatForm({
         <input
           name="helpingBorders"
           type="checkbox"
+          key={nanoid()}
           defaultChecked={currentPaperConfig?.helpingBorders ?? true}
         />
       </label>
@@ -87,6 +97,7 @@ export default function FormatForm({
         <input
           name="helpingCorners"
           type="checkbox"
+          key={nanoid()}
           defaultChecked={currentPaperConfig?.helpingCorners ?? true}
         />
       </label>
@@ -95,10 +106,10 @@ export default function FormatForm({
         <input
           name="pagesCounter"
           type="checkbox"
+          key={nanoid()}
           defaultChecked={currentPaperConfig?.pagesCounter ?? true}
         />
       </label>
-      <label></label>
       <h3 className={css.Header}>Margins:</h3>
       <section className={css.MarginSection}>
         <label htmlFor="top" className={css.Label}>
@@ -107,6 +118,8 @@ export default function FormatForm({
             name="top"
             type="number"
             min={0}
+            step={0.01}
+            key={nanoid()}
             defaultValue={currentPaperConfig?.margin.top ?? 1}
           />
         </label>
@@ -116,6 +129,8 @@ export default function FormatForm({
             name="right"
             type="number"
             min={0}
+            step={0.01}
+            key={nanoid()}
             defaultValue={currentPaperConfig?.margin.right ?? 1}
           />
         </label>
@@ -125,6 +140,8 @@ export default function FormatForm({
             name="bottom"
             type="number"
             min={0}
+            step={0.01}
+            key={nanoid()}
             defaultValue={currentPaperConfig?.margin.bottom ?? 1}
           />
         </label>
@@ -134,6 +151,8 @@ export default function FormatForm({
             name="left"
             type="number"
             min={0}
+            step={0.01}
+            key={nanoid()}
             defaultValue={currentPaperConfig?.margin.left ?? 1}
           />
         </label>
