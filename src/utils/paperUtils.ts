@@ -6,8 +6,6 @@ import {
   IImageConfig,
 } from "./interfaces-n-types";
 
-export const units = ["in", "cm", "mm"];
-
 // Relations between defined units.
 const unitRelations = {
   mm: {

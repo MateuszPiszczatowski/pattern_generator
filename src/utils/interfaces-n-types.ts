@@ -35,7 +35,8 @@ export interface IPaperConfig {
 }
 
 // Type with possible to use units
-export type PaperUnit = "mm" | "cm" | "in";
+export const units = ["mm", "cm", "in"] as const;
+export type PaperUnit = (typeof units)[number];
 
 // Interface of sewing pattern. Every sewing pattern should be able to return its width, height and data-url.
 export interface ISewingPatter {

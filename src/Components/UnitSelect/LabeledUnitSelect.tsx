@@ -1,8 +1,9 @@
-import { PaperUnit } from "../../utils/interfaces-n-types";
+import { PaperUnit, units } from "../../utils/interfaces-n-types";
 import { nanoid } from "nanoid";
 
+// A component that is being used to set unit in multiple places
 export default function LabeledUnitSelect({ style, defaultUnit }: ILabeledUnitSelectProps) {
-  const units = ["in", "cm", "mm"];
+  // Check if default value hest been set, and if not, set it to 'cm'
   function getDefaultValue() {
     return defaultUnit && units.includes(defaultUnit) ? defaultUnit : "cm";
   }

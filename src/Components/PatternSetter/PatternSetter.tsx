@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import PatternsBrowser from "../PatternsBrowser/PatternsBrowser";
 import { IImageConfig } from "../../utils/interfaces-n-types";
 import css from "./PatternSetter.module.scss";
+// A component that represents the section of the app that is used for setting the pattern
 export default function PatternSetter({ setImageConfig }: IPatternSetterProps) {
   return (
     <section className={css.Section}>
