@@ -19,7 +19,7 @@
 
 .Header {
   width: 100%;
-  background-color: #f2b5d4;
+  background-color: variables.$accentBackground;
   font-family: "Courier", Courier, monospace;
   & > h1 {
     margin: 0;

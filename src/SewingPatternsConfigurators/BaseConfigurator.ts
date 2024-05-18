@@ -1,4 +1,5 @@
 import { IPatternConfigurator, ISewingPatter } from "../utils/interfaces-n-types";
+
 export default abstract class BaseConfigurator implements IPatternConfigurator {
   public abstract readonly title: string;
   public abstract readonly picture: string;
@@ -15,39 +16,42 @@ export default abstract class BaseConfigurator implements IPatternConfigurator {
       this.positions[name].value = value;
     } else throw new Error(`position ${name} is not present in the positions array`);
   }
+
   public setSelect(name: string, value: boolean) {
     if (Object.keys(this.selects).includes(name)) {
       this.selects[name].value = value;
     } else throw new Error(`select ${name} is not present in the positions array`);
   }
-  private lackingElems(dictWithValues: { [key: string]: { value?: number | boolean } }) {
+
+  private getLackingElems(dictWithValues: { [key: string]: { value?: number | boolean } }) {
     const lacking: string[] = [];
     Object.keys(dictWithValues).forEach((pos) => {
       if (!("value" in dictWithValues[pos])) lacking.push(pos);
     });
     return lacking;
   }
-  public lackingPositions() {
-    return this.lackingElems(this.positions);
+  public getLackingPositions() {
+    return this.getLackingElems(this.positions);
   }
-  public lackingSelects() {
-    return this.lackingElems(this.selects);
+  public getLackingSelects() {
+    return this.getLackingElems(this.selects);
   }
   public isReady() {
-    return this.lackingPositions().length === 0 && this.lackingSelects().length === 0;
+    return this.getLackingPositions().length === 0 && this.getLackingSelects().length === 0;
   }
+
   public getUnreadyMessages() {
     const messages: string[] = [];
-    if (this.lackingPositions().length > 0) {
+    if (this.getLackingPositions().length > 0) {
       let lackingPositionsMessage = "There are positions, that are lacking:";
-      this.lackingPositions().forEach((position) => {
+      this.getLackingPositions().forEach((position) => {
         lackingPositionsMessage += ` ${position},`;
       });
       messages.push(lackingPositionsMessage);
     }
-    if (this.lackingSelects().length > 0) {
+    if (this.getLackingSelects().length > 0) {
       let lackingSelectsMessage = "There are options, that are lacking:";
-      this.lackingSelects().forEach((select) => {
+      this.getLackingSelects().forEach((select) => {
         lackingSelectsMessage += ` ${select},`;
       });
       messages.push(lackingSelectsMessage);

@@ -2,7 +2,10 @@ import CircleSkirtPattern from "../SewingPatterns/CircleSkirt";
 import BaseConfigurator from "./BaseConfigurator";
 export default class CircleSkirtConfigurator extends BaseConfigurator {
   public readonly title = "Circle Skirt";
-  public readonly picture = "";
+  public readonly picture = new CircleSkirtPattern(
+    { skirtLength: 10, waist: 10, degrees: 540, lineWidth: 0.25 },
+    { isHalved: false, shouldReduce: false }
+  ).getDataUrl();
   public readonly positions: {
     [key: string]: { message: string; default: number; value?: number };
   } = {
@@ -37,6 +40,7 @@ export default class CircleSkirtConfigurator extends BaseConfigurator {
       );
     throw new Error("Configuration is not ready!");
   }
+
   public override isReady() {
     let result = super.isReady();
     if (result) {

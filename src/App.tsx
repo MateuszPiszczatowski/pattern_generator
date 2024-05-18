@@ -2,7 +2,7 @@ import { Notify } from "notiflix/build/notiflix-notify-aio";
 import PrintSplitter from "./Components/PrintSplitter/PrintSplitter";
 import css from "./App.module.scss";
 import * as paperUtils from "./utils/paperUtils";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { IImageConfig, IPaperConfig } from "./utils/interfaces-n-types";
 import Modal from "./Components/Modal/Modal";
 import PatternSetter from "./Components/PatternSetter/PatternSetter";
@@ -11,28 +11,35 @@ import { nanoid } from "nanoid";
 
 function App() {
   Notify.init({ showOnlyTheLastOne: true });
-  const [notifyClass] = useState(nanoid());
   const modalTabIndex = 1;
   const printingSectionTabIndex = 2;
-  const printingSectionRef = useRef(null as null | HTMLDivElement);
+
+  const [notifyClass] = useState(nanoid());
+
   const [paperConfig, setPaperConfig] = useState(paperUtils.DefaultSizes.a4 as IPaperConfig);
   const [imageConfig, setImageConfig] = useState(null as null | IImageConfig);
   const [isPrintingViewEnabled, setIsPrintingViewEnabled] = useState(false);
+
   const [modalContent, setModalContent] = useState(null as ReactNode);
   const [isModalEnabled, setIsModalEnabled] = useState(false);
+
   const [isBackgroundColored, setIsBackgroundColored] = useState(true);
+
   function disablePrintingView() {
     const notify = document.querySelector(`.a${notifyClass}`);
     notify?.parentElement?.removeChild(notify);
+
     setIsBackgroundColored(true);
     setIsPrintingViewEnabled(false);
   }
+
   useEffect(() => {
     const bodyElem = document.querySelector("body");
     if (bodyElem)
       if (isBackgroundColored) bodyElem.style.removeProperty("background-color");
       else bodyElem.style.backgroundColor = "#fff";
   }, [isBackgroundColored]);
+
   return (
     <>
       <header className={css.Header}>
@@ -42,9 +49,9 @@ function App() {
       </header>
       <main>
         <section
+          className={css.Section}
           hidden={isPrintingViewEnabled}
-          style={{ display: isPrintingViewEnabled ? "none" : "flex" }}
-          className={css.Section}>
+          style={{ display: isPrintingViewEnabled ? "none" : "flex" }}>
           <PatternSetter setImageConfig={setImageConfig} setModalChildren={setModalContent} />
           <FormatSetter
             paperConfig={paperConfig}
@@ -67,11 +74,11 @@ function App() {
         </section>
       </main>
       <section
+        tabIndex={printingSectionTabIndex}
         onLoad={(e) => {
           e.currentTarget.focus();
         }}
-        tabIndex={printingSectionTabIndex}
-        ref={printingSectionRef}
+        style={{ display: isPrintingViewEnabled ? "block" : "none" }}
         hidden={!isPrintingViewEnabled}
         onKeyDown={(e) => {
           if (e.key === "Escape") {

@@ -6,25 +6,25 @@ export default function GuidePage({ paperConfig, imageConfig }: IGuidePageProps)
   const imageSizesInPaperUnits = getIImageSizesInIPaperUnits(imageConfig, paperConfig);
   const drawingHeight = paperConfig.height - (paperConfig.margin.top + paperConfig.margin.bottom);
   const drawingWidth = paperConfig.width - paperConfig.margin.left - paperConfig.margin.right;
-  const flatRatio =
-    1.01 *
-    Math.max(
-      (Math.ceil(imageSizesInPaperUnits.height / drawingHeight) * paperConfig.height) /
-        drawingHeight,
-      (Math.ceil(imageSizesInPaperUnits.width / drawingWidth) * paperConfig.width) / drawingWidth
-    );
+  const flatRatio = Math.max(
+    (Math.ceil(imageSizesInPaperUnits.height / drawingHeight) * paperConfig.height) / drawingHeight,
+    (Math.ceil(imageSizesInPaperUnits.width / drawingWidth) * paperConfig.width) / drawingWidth
+  );
   const rotatedRatio = Math.max(
     (Math.ceil(imageSizesInPaperUnits.height / drawingHeight) * paperConfig.height) / drawingWidth,
     (Math.ceil(imageSizesInPaperUnits.width / drawingWidth) * paperConfig.width) / drawingHeight
   );
   const shouldRotate = rotatedRatio < flatRatio;
+
   const ratio = shouldRotate ? rotatedRatio : flatRatio;
+
   const adjustedMargin = {
     top: paperConfig.margin.top / ratio,
     bottom: paperConfig.margin.bottom / ratio,
     left: paperConfig.margin.left / ratio,
     right: paperConfig.margin.right / ratio,
   };
+
   const adjustedImageConfig = {
     height: imageConfig.height / ratio,
     width: imageConfig.width / ratio,

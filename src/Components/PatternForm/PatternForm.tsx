@@ -30,7 +30,6 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
         source: pattern.getDataUrl(),
         unit: (e.currentTarget.elements.namedItem("unit") as HTMLInputElement).value as PaperUnit,
       });
-      return;
     } else {
       window.alert("".concat(...patternConfigurator.getUnreadyMessages()));
       console.log("".concat(...patternConfigurator.getUnreadyMessages()));

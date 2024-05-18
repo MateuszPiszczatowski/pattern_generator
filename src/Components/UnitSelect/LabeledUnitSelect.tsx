@@ -1,17 +1,16 @@
-import { PaperUnit } from "../../utils/interfaces-n-types";
+import { PaperUnit, units } from "../../utils/interfaces-n-types";
+import { nanoid } from "nanoid";
 
 export default function LabeledUnitSelect({ style, defaultUnit }: ILabeledUnitSelectProps) {
-  const units = ["in", "cm", "mm"];
-  console.log(defaultUnit);
-  console.log(defaultUnit && units.includes(defaultUnit));
+  function getDefaultValue() {
+    return defaultUnit && units.includes(defaultUnit) ? defaultUnit : "cm";
+  }
   return (
     <label htmlFor="unit" className={style}>
       Unit:{" "}
-      <select
-        name="unit"
-        defaultValue={defaultUnit && units.includes(defaultUnit) ? defaultUnit : "cm"}>
+      <select name="unit" defaultValue={getDefaultValue()} key={nanoid()}>
         {units.map((unit) => (
-          <option value={unit} key={unit} selected={unit === defaultUnit}>
+          <option value={unit} key={nanoid()}>
             {unit}
           </option>
         ))}

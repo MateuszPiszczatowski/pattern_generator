@@ -97,13 +97,13 @@ export default class CircleSkirtPattern implements ISewingPatter {
     const radius = this.fullRadius;
     const angle = this.partialAngle * (considerHalving && this.isHalved ? 0.5 : 1);
     if (angle < 90) {
-      const height = radius * Math.sin(toRadians(angle)); // the circle sector will lay horizontaly, in a way that one of the arms will be paralel to the horizontal axis, and the second arm lower. As far as I know, this should be the shortest way possible to place the object. The height is calculated using trigonometry.
+      const height = radius * Math.sin(toRadians(angle));
       return height;
     }
     if (angle <= 180) {
-      return radius; // for angles from 90 to 180 the shortest height is the radius
+      return radius;
     }
-    return radius + radius * Math.cos(toRadians((360 - angle) / 2)); // for angles over 180 degrees, the section is placed in a way that arms of the section are from the center to bottom, equally distant from the vertical axis of the circle. This should allow for the lowest height possible.
+    return radius + radius * Math.cos(toRadians((360 - angle) / 2));
   }
 
   private setSvgElemFillAndStroke(elem: SVGElement) {
@@ -253,7 +253,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
     const height = Math.min(
       2 * this.spacing,
       0.3 * this.fullRadius * Math.tan(toRadians(Math.min(90, angle)))
-    ); // height is sized by putting a rectangle of 0.6 radius horizontal sides into the sector, 0.1 of the radius offset from the left border, and calculating the max length of the vertical sides, but not bigger than double the space between the circles. It ensures that the text is contained within the sector but doesn't get unreasonably high.
+    );
     const yPoint = yAxisMod + height;
     const xPoints = [this.spacing, this.skirtLength];
     helperPath.setAttribute("d", `M${xPoints[0]} ${yPoint} L${xPoints[1]} ${yPoint}`);

@@ -28,6 +28,7 @@ export default function CanvasPage({
   useEffect(() => {
     const { width, height } = canvasDrawSizes;
     const blockSize = (width < height ? width : height) * 0.02;
+
     function printPageNumber(canvasContext: CanvasRenderingContext2D) {
       const fontSize = (width < height ? width : height) * 0.6;
       canvasContext.font = `${fontSize}px serif`;
@@ -45,7 +46,9 @@ export default function CanvasPage({
       canvasContext.lineWidth = blockSize;
       canvasContext.beginPath();
       const radius = (width < height ? width : height) * 0.05;
+
       canvasContext.arc(marginInPixels.left, marginInPixels.top, radius, 0, toRadians(90));
+
       canvasContext.moveTo(marginInPixels.left + width, marginInPixels.top + radius);
       canvasContext.arc(
         marginInPixels.left + width,
@@ -54,6 +57,7 @@ export default function CanvasPage({
         toRadians(90),
         toRadians(180)
       );
+
       canvasContext.moveTo(marginInPixels.left, marginInPixels.top + height - radius);
       canvasContext.arc(
         marginInPixels.left,
@@ -62,6 +66,7 @@ export default function CanvasPage({
         toRadians(270),
         toRadians(360)
       );
+
       canvasContext.moveTo(marginInPixels.left + width - radius, marginInPixels.top + height);
       canvasContext.arc(
         marginInPixels.left + width,
@@ -76,6 +81,21 @@ export default function CanvasPage({
 
     function printBorders(canvasContext: CanvasRenderingContext2D) {
       canvasContext.fillStyle = "rgba(0 0 0 / 20%)";
+
+      const widthRest =
+        ((width / blockSize -
+          Math.floor(width / blockSize) +
+          (Math.floor(width / blockSize) % 2 === 0 ? 1 : 0)) /
+          2) *
+        blockSize;
+
+      const heightRest =
+        ((height / blockSize -
+          Math.floor(height / blockSize) +
+          (Math.floor(height / blockSize) % 2 === 0 ? 1 : 0)) /
+          2) *
+        blockSize;
+
       if (strongBorder.isBottom) {
         canvasContext.fillRect(
           marginInPixels.left + blockSize,
@@ -83,6 +103,15 @@ export default function CanvasPage({
           width - blockSize * 2,
           blockSize
         );
+      } else {
+        for (let i = 1; i < width / blockSize - 2; i += 2) {
+          canvasContext.fillRect(
+            widthRest + i * blockSize + marginInPixels.left,
+            height + marginInPixels.top - blockSize,
+            blockSize,
+            blockSize
+          );
+        }
       }
       if (strongBorder.isLeft) {
         canvasContext.fillRect(
@@ -91,7 +120,17 @@ export default function CanvasPage({
           blockSize,
           height - blockSize * 2
         );
+      } else {
+        for (let i = 1; i < height / blockSize - 2; i += 2) {
+          canvasContext.fillRect(
+            marginInPixels.left,
+            heightRest + i * blockSize + marginInPixels.top,
+            blockSize,
+            blockSize
+          );
+        }
       }
+
       if (strongBorder.isRight) {
         canvasContext.fillRect(
           marginInPixels.left + width - blockSize,
@@ -99,6 +138,15 @@ export default function CanvasPage({
           blockSize,
           height - blockSize * 2
         );
+      } else {
+        for (let i = 1; i < height / blockSize - 2; i += 2) {
+          canvasContext.fillRect(
+            width + marginInPixels.left - blockSize,
+            heightRest + i * blockSize + marginInPixels.top,
+            blockSize,
+            blockSize
+          );
+        }
       }
       if (strongBorder.isTop) {
         canvasContext.fillRect(
@@ -107,7 +155,17 @@ export default function CanvasPage({
           width - blockSize * 2,
           blockSize
         );
+      } else {
+        for (let i = 1; i < width / blockSize - 2; i += 2) {
+          canvasContext.fillRect(
+            widthRest + i * blockSize + marginInPixels.left,
+            marginInPixels.top,
+            blockSize,
+            blockSize
+          );
+        }
       }
+
       canvasContext.fillRect(marginInPixels.left, marginInPixels.top, blockSize, blockSize);
       canvasContext.fillRect(
         marginInPixels.left + width - blockSize,
@@ -127,58 +185,6 @@ export default function CanvasPage({
         blockSize,
         blockSize
       );
-      const widthRest =
-        ((width / blockSize -
-          Math.floor(width / blockSize) +
-          (Math.floor(width / blockSize) % 2 === 0 ? 1 : 0)) /
-          2) *
-        blockSize;
-      if (!strongBorder.isBottom) {
-        for (let i = 1; i < width / blockSize - 2; i += 2) {
-          canvasContext.fillRect(
-            widthRest + i * blockSize + marginInPixels.left,
-            height + marginInPixels.top - blockSize,
-            blockSize,
-            blockSize
-          );
-        }
-      }
-      if (!strongBorder.isTop) {
-        for (let i = 1; i < width / blockSize - 2; i += 2) {
-          canvasContext.fillRect(
-            widthRest + i * blockSize + marginInPixels.left,
-            marginInPixels.top,
-            blockSize,
-            blockSize
-          );
-        }
-      }
-      const heightRest =
-        ((height / blockSize -
-          Math.floor(height / blockSize) +
-          (Math.floor(height / blockSize) % 2 === 0 ? 1 : 0)) /
-          2) *
-        blockSize;
-      if (!strongBorder.isLeft) {
-        for (let i = 1; i < height / blockSize - 2; i += 2) {
-          canvasContext.fillRect(
-            marginInPixels.left,
-            heightRest + i * blockSize + marginInPixels.top,
-            blockSize,
-            blockSize
-          );
-        }
-      }
-      if (!strongBorder.isRight) {
-        for (let i = 1; i < height / blockSize - 2; i += 2) {
-          canvasContext.fillRect(
-            width + marginInPixels.left - blockSize,
-            heightRest + i * blockSize + marginInPixels.top,
-            blockSize,
-            blockSize
-          );
-        }
-      }
     }
 
     const canvasPage = canvasRef.current!;

@@ -135,7 +135,6 @@ const PrintSplitter = ({
   helperView,
 }: IPrintSplitterProps) => {
   const [pages, setPages] = useState([] as ReactNode[]);
-
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
   const { cols, rows, paperConfigToUse } = useMemo(() => {
@@ -161,7 +160,7 @@ const PrintSplitter = ({
   useEffect(() => {
     const imageElem = imageRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
-    imageElem.onload = () => {
+    imageElem.addEventListener("load", function () {
       onImageLoad(
         canvasSizingHelperElem,
         paperConfigToUse,
@@ -175,8 +174,8 @@ const PrintSplitter = ({
         printSizesHelper ? <SizesHelper paperConfig={paperConfigToUse} key={nanoid()} /> : undefined
       );
       imageElem.style.visibility = "hidden";
-      imageElem.style.display = "none";
-    };
+      imageElem.style.opacity = "0";
+    });
     imageElem.src = imageConfig.source;
   }, [cols, imageConfig, paperConfig, paperConfigToUse, printGuidePage, printSizesHelper, rows]);
   return (
@@ -190,6 +189,7 @@ const PrintSplitter = ({
           height: `${paperConfigToUse.height}${paperConfigToUse.unit}`,
         }}
       />
+
       <img
         ref={imageRef}
         style={{
@@ -198,6 +198,7 @@ const PrintSplitter = ({
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
+
       <article
         style={{
           display: "flex",

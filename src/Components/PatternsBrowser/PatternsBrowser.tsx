@@ -4,6 +4,7 @@ import { IImageConfig } from "../../utils/interfaces-n-types";
 import PatternOption from "../PatternOption/PatternOption";
 import css from "./PatternBrowser.module.scss";
 import { nanoid } from "nanoid";
+
 export default function PatternsBrowser({ setImageConfig }: IPatternsBrowserProps) {
   const [filter, setFilter] = useState("");
   const [patternName, setPatternName] = useState("");

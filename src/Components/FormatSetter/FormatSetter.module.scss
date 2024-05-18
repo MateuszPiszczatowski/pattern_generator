@@ -81,4 +81,15 @@
   height: 2em;
   align-items: center;
   gap: 0.5em;
+  &FormatButtons {
+    height: fit-content;
+  }
+}
+.SizesList {
+  display: flex;
+  gap: 0.3em;
+  width: fit-content;
+  justify-content: center;
+  list-style-type: none;
+  flex-wrap: wrap;
 }

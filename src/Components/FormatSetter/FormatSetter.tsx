@@ -1,9 +1,9 @@
 import * as paperUtils from "../../utils/paperUtils";
 import { IPaperConfig } from "../../utils/interfaces-n-types";
-import { ChangeEvent, ReactNode, useReducer, useRef } from "react";
+import { MouseEvent as ReactMouseEvent, ReactNode, useReducer } from "react";
 import FormatForm from "../FormatForm/FormatForm";
 import css from "./FormatSetter.module.scss";
-
+import { nanoid } from "nanoid";
 export default function FormatSetter({
   paperConfig,
   setPaperConfig,
@@ -12,17 +12,16 @@ export default function FormatSetter({
 }: IFormatSetterProps) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   function openSetFormatModal() {
-    setModalChildren([
+    setModalChildren(
       <FormatForm
         currentPaperConfig={paperConfig}
         setPaperConfig={setPaperConfig}
         setIsModalEnabled={setIsModalEnabled}
-      />,
-    ]);
+      />
+    );
     setIsModalEnabled(true);
   }
-  const formatSelectRef = useRef(null as null | HTMLSelectElement);
-  const setFormat = (e: ChangeEvent<HTMLSelectElement>) => {
+  const setFormat = (e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
     const option = e.currentTarget.value;
     if (option !== "custom") {
       setPaperConfig(paperUtils.DefaultSizes[option]);
@@ -63,23 +62,24 @@ export default function FormatSetter({
             </tbody>
           </table>
         </div>
-        <label className={css.Label} htmlFor="paperFormat">
+        <label className={css.LabelFormatButtons.concat(" ", css.Label)} htmlFor="paperFormat">
           Select paper format:
-          <select ref={formatSelectRef} onChange={setFormat}>
+          <ul className={css.SizesList}>
             {Object.keys(paperUtils.DefaultSizes).map((key) => {
               return (
-                <option value={key} key={key}>
-                  {key[0].toUpperCase().concat(key.slice(1))}
-                </option>
+                <li key={key.concat(".li.", nanoid())}>
+                  <button value={key} key={key.concat(".button.", nanoid())} onClick={setFormat}>
+                    {key[0].toUpperCase().concat(key.slice(1))}
+                  </button>
+                </li>
               );
             })}
-            <option value="custom">Custom</option>
-          </select>
-          {formatSelectRef.current?.value === "custom" && (
-            <button className={css.Button} onClick={openSetFormatModal}>
-              Edit
-            </button>
-          )}
+            <li key={"custom.li.".concat(nanoid())}>
+              <button key={"custom.li.".concat(nanoid())} value="custom" onClick={setFormat}>
+                Custom
+              </button>
+            </li>
+          </ul>
         </label>
       </div>
     </section>
