@@ -16,8 +16,8 @@ The pattern is split for the paper format and gets additional helping elements:
 ## Project status
 
 As for the project status, I can think of many things that I may introduce later, but I believe it's advanced enough as it is to be used as a final project for cs50 course. That's why I've created this branch with this CS50 oriented readme that you're reading right now.
-Original repository is avalible under this link: github.com/MateuszPiszczatowski/pattern_generator
-The original project may have been progressed further at the moment of checking this. The branch that is CS50 submission is this one, cs50_final_project. Current progress can be checked on the main branch.
+Original repository is avalible under this link: [github.com/MateuszPiszczatowski/pattern_generator](https://github.com/MateuszPiszczatowski/pattern_generator "main branch")
+The original project may have been progressed further at the moment of checking this. The branch that is CS50 submission is this one, [cs50_final_project](https://github.com/MateuszPiszczatowski/pattern_generator/tree/cs50_final_project "CS50 branch"). Current progress can be checked on the main branch.
 
 ## Used technologies
 
@@ -28,12 +28,12 @@ For styling I'm using SCSS which is a CSS extension.
 
 ## Credits
 
-I've used favicon provided by [Freepik](freepik.com "Freepik")
+I've used favicon provided by [Freepik](https://freepik.com "Freepik")
 
 ## Files description
 
 ./Public/  
-&nbsp;&nbsp;&nbsp;&nbsp;| favicon.ico - favicon provided by [Freepik](freepik.com "Freepik").
+&nbsp;&nbsp;&nbsp;&nbsp;| favicon.ico - favicon provided by [Freepik](https://freepik.com "Freepik").
 
 ./src/  
 &nbsp;&nbsp;&nbsp;&nbsp;| Components/ - each folder containes the component file of .tsx extension, and some of them contains the .module.scss file which are styles for that component.  
