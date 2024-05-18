@@ -3,6 +3,7 @@ import { IImageConfig, IPatternConfigurator } from "../../utils/interfaces-n-typ
 import PatternForm from "../PatternForm/PatternForm";
 import css from "./PatternOption.module.scss";
 
+// A component representing a pattern that is possible to be chosen. It's a button with a name and image of the pattern that sets adequate PatternForm
 export default function PatternOption({
   patternConfigurator,
   setFormElement,
