@@ -4,7 +4,6 @@ import { MouseEvent as ReactMouseEvent, ReactNode, useReducer } from "react";
 import FormatForm from "../FormatForm/FormatForm";
 import css from "./FormatSetter.module.scss";
 import { nanoid } from "nanoid";
-// Component for setting paper format
 export default function FormatSetter({
   paperConfig,
   setPaperConfig,
@@ -12,18 +11,16 @@ export default function FormatSetter({
   setModalChildren,
 }: IFormatSetterProps) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  // Display FormatForm in a modal
   function openSetFormatModal() {
     setModalChildren(
       <FormatForm
-        currentPaperConfig={paperConfig} // This allows to use custom for small adjustments to the current format
+        currentPaperConfig={paperConfig}
         setPaperConfig={setPaperConfig}
         setIsModalEnabled={setIsModalEnabled}
       />
     );
     setIsModalEnabled(true);
   }
-  // Set paperConfig to a predefined format or open modal for setting it to custom
   const setFormat = (e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
     const option = e.currentTarget.value;
     if (option !== "custom") {

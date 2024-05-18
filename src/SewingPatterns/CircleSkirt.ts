@@ -1,9 +1,7 @@
 import { toRadians } from "../utils/geometry";
 import { nanoid } from "nanoid";
 import { ISewingPatter } from "../utils/interfaces-n-types";
-// The factor by which the elements should be separated. It is multiplied by full radius to get the spacing.
 const spacingSizeFactor = 0.02;
-// Factor to multiply the sizes by, to lessen the inconsistencies from floating poin numbers not being as reliable as integers.
 const sizesFactor = 100;
 
 export default class CircleSkirtPattern implements ISewingPatter {
@@ -15,14 +13,10 @@ export default class CircleSkirtPattern implements ISewingPatter {
   private readonly fullRadius;
   private readonly width;
   private readonly height;
-  // The amount of full circles (360 degrees) in the angle provided by user.
   private readonly fullCirclesCount;
   private readonly spacing;
-  // The degrees that are left after removing all full circles from the degrees provided by user.
   private readonly partialAngle;
-  // Should half symetric elements
   private readonly isHalved;
-  // Should repeating elements be printed only once.
   private readonly shouldReduce;
   private readonly lineWidth;
   constructor(
@@ -60,16 +54,13 @@ export default class CircleSkirtPattern implements ISewingPatter {
     );
   }
 
-  // Get width smaller by sizesFactor so the magnitude are the same as in input data.
   public getWidth() {
     return this.width / sizesFactor;
   }
-  // Get height smaller by sizesFactor so the magnitude are the same as in input data.
   public getHeight() {
     return this.height / sizesFactor;
   }
 
-  // Calculate the radius of the inner circle (waist).
   private getWaistRadius() {
     return (
       this.waist /
@@ -79,7 +70,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     );
   }
 
-  // Calculate the height of the pattern.
   private calcHeight() {
     const fullCirclesCount = this.shouldReduce
       ? Math.min(this.fullCirclesCount, 1)
@@ -91,7 +81,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     );
   }
 
-  // Calculate the width of the pattern.
   private calcWidth() {
     const angle = this.partialAngle * (this.isHalved ? 0.5 : 1);
     const radius = this.fullRadius;
@@ -100,43 +89,29 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return radius + Math.cos(toRadians(180 - angle)) * radius + this.spacing * 2;
   }
 
-  // Calculate the partial angle.
   private getPartialAngle() {
     return this.degrees - this.fullCirclesCount * 360;
   }
 
-  // Calculate the partial circle haight
   private getPartialCircleHeight(considerHalving = true) {
     const radius = this.fullRadius;
     const angle = this.partialAngle * (considerHalving && this.isHalved ? 0.5 : 1);
     if (angle < 90) {
-      const height =
-        radius *
-        Math.sin(
-          toRadians(angle)
-        ); /* the circle sector will lay horizontaly, in a way that one of the arms will be paralel
-       to the horizontal axis, and the second arm lower.As far as I know, this should be the shortest way possible to place the object. 
-       The height is calculated using trigonometry. */
+      const height = radius * Math.sin(toRadians(angle));
       return height;
     }
     if (angle <= 180) {
-      return radius; // for angles from 90 to 180 the shortest height is the radius.
+      return radius;
     }
-    return (
-      radius + radius * Math.cos(toRadians((360 - angle) / 2))
-    ); /* for angles over 180 degrees, the section
-     is placed in a way that arms of the section are from the center to bottom, equally distant from the vertical 
-     axis of the circle. This should allow for the lowest height possible. */
+    return radius + radius * Math.cos(toRadians((360 - angle) / 2));
   }
 
-  // Set the svg element attributes.
   private setSvgElemFillAndStroke(elem: SVGElement) {
     elem.setAttribute("fill", "transparent");
     elem.setAttribute("stroke", "black");
     elem.setAttribute("stroke-width", `${this.lineWidth * sizesFactor}`);
   }
 
-  // Get SVG circle element.
   private getSvgCircle(x: number, y: number, radius: number) {
     const svgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     svgCircle.setAttribute("cx", `${x}`);
@@ -146,12 +121,10 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return svgCircle;
   }
 
-  // YAxisMod is a space between y=0 coordinate, and the begining of current element. Counter is how many (halved) fullCircles have been drawn already.
   private getYAxisMod(counter: number) {
     return (2 * this.spacing + (this.isHalved ? 1 : 2) * this.fullRadius) * counter + this.spacing;
   }
 
-  // Generate the inner circle of a full circle.
   private getInnerCircle(yAxisMod: number) {
     return this.getSvgCircle(
       this.fullRadius + this.spacing,
@@ -160,7 +133,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     );
   }
 
-  // Generate outer circle of a full circle.
   private getOuterCircle(yAxisMod: number) {
     return this.getSvgCircle(
       this.fullRadius + this.spacing,
@@ -169,7 +141,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     );
   }
 
-  // Create an arc SVG path, it is a function used in higher order functions.
   private arcPath(
     startPointInner: number[],
     endPointInner: number[],
@@ -187,7 +158,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return `M${startPointInner[0]} ${startPointInner[1]} ${innerArc} ${arm} ${outerArc} Z`;
   }
 
-  // Genarate a path for a sector that is beneath 90 degrees.
   private underNinetyPath(angle: number, yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [
@@ -202,8 +172,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  /* Generate a path for a sector of exactly ninety degree. It could be done with the underNinetyPath 
-  and the result would be the same, but in this scenario there is less math done. */
   private ninetyPath(yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [this.fullRadius + this.spacing, this.waistRadius + yAxisMod];
@@ -212,7 +180,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  // Generate a path for a sector between ninety and one hundred eighty degrees.
   private ninetyToOneEightyPath(angle: number, yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [
@@ -227,7 +194,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  // Generate a path for a sector that is exactly 180 degrees.
   private oneEightyPath(yAxisMod: number) {
     const startPointInner = [this.fullRadius - this.waistRadius + this.spacing, yAxisMod];
     const endPointInner = [this.fullRadius + this.spacing + this.waistRadius, yAxisMod];
@@ -236,7 +202,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter);
   }
 
-  // Generate a path for a sector that is over one hundred eighty degrees.
   private overOneEightyPath(angle: number, yAxisMod: number) {
     const innerYCoord =
       Math.cos(toRadians((360 - angle) / 2)) * this.waistRadius + yAxisMod + this.fullRadius;
@@ -262,7 +227,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.arcPath(startPointInner, endPointInner, startPointOuter, endPointOuter, true);
   }
 
-  // Selects which function should be used based on the angle and returns its return value.
   private pathFunctionSelectorAndCaller(angle: number, yAxisMod: number) {
     if (angle < 90) {
       return this.underNinetyPath(angle, yAxisMod);
@@ -279,7 +243,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return this.overOneEightyPath(angle, yAxisMod);
   }
 
-  // Draws the message that the pattern is halved by that line.
   private getHalfSignature(angle: number, yAxisMod: number) {
     const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
     const textPathElem = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
@@ -290,7 +253,7 @@ export default class CircleSkirtPattern implements ISewingPatter {
     const height = Math.min(
       2 * this.spacing,
       0.3 * this.fullRadius * Math.tan(toRadians(Math.min(90, angle)))
-    ); // height is sized by putting a rectangle of 0.6 radius horizontal sides into the sector, 0.1 of the radius offset from the left border, and calculating the max length of the vertical sides, but not bigger than double the space between the circles. It ensures that the text is contained within the sector but doesn't get unreasonably high.
+    );
     const yPoint = yAxisMod + height;
     const xPoints = [this.spacing, this.skirtLength];
     helperPath.setAttribute("d", `M${xPoints[0]} ${yPoint} L${xPoints[1]} ${yPoint}`);
@@ -303,7 +266,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return [helperPath, textElem];
   }
 
-  // Get a sector of a circle.
   private getCircleSectorPart(angle: number, yAxisMod: number) {
     const circleSectorPart = document.createElementNS("http://www.w3.org/2000/svg", "path");
     const path = this.pathFunctionSelectorAndCaller(angle, yAxisMod);
@@ -316,7 +278,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return [circleSectorPart];
   }
 
-  // Draws the information how many times should the repeating (half)circle be printed.
   private getMultiplicatorSign() {
     const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
     textElem.textContent = `${this.fullCirclesCount}x`;
@@ -326,7 +287,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     return textElem;
   }
 
-  // Function to draw all repeating full(halved) circles.
   private appendFullCircles() {
     const svg = this.svg;
     const isHalved = this.isHalved;
@@ -349,7 +309,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     }
   }
 
-  // Appends the partial angle sector to the SVG.
   private appendPartial(yAxisMod: number) {
     const svg = this.svg;
     if (this.partialAngle > 0) {
@@ -359,7 +318,6 @@ export default class CircleSkirtPattern implements ISewingPatter {
     }
   }
 
-  // Returns data url of the svg that can be used as src of an image.
   public getDataUrl() {
     const svgString = new XMLSerializer().serializeToString(this.svg);
     const dataUrl = "data:image/svg+xml," + encodeURIComponent(svgString);

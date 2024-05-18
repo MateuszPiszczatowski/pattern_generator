@@ -3,34 +3,25 @@ import { IImageConfig, IPatternConfigurator, PaperUnit } from "../../utils/inter
 import LabeledUnitSelect from "../UnitSelect/LabeledUnitSelect";
 import css from "./PatternForm.module.scss";
 
-// A component for setting the pattern sizes and options
 export default function PatternForm({ patternConfigurator, setImageConfig }: IPatternFormProps) {
-  // On form submit
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault(); // Don't refresh
-    // Empty dictionaries for positions and selects values
+    e.preventDefault();
     const positions: { [key: string]: number } = {};
     const selects: { [key: string]: boolean } = {};
-    // For each position in the configurator
     Object.keys(patternConfigurator.positions).forEach((position) => {
-      // Get the form input with the name of that position
       const element = e.currentTarget.elements.namedItem(position) as HTMLInputElement | null;
-      // If there is such element, set the positions[position] to the value of that element
       if (element) {
         positions[position] = Number(element.value);
       }
     });
-    // As above but for selects
     Object.keys(patternConfigurator.selects).forEach((select) => {
       const element = e.currentTarget.elements.namedItem(select) as HTMLInputElement | null;
       if (element) {
         selects[select] = element.checked;
       }
     });
-    // Set all positions and selects in configurator to the values from the form
     Object.keys(positions).forEach((key) => patternConfigurator.setPosition(key, positions[key]));
     Object.keys(selects).forEach((key) => patternConfigurator.setSelect(key, selects[key]));
-    // Use configurator's validation, if the configurator is ready, create the pattern and assign it as the source of the image config
     if (patternConfigurator.isReady()) {
       const pattern = patternConfigurator.getPattern();
       setImageConfig({
@@ -40,18 +31,15 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
         unit: (e.currentTarget.elements.namedItem("unit") as HTMLInputElement).value as PaperUnit,
       });
     } else {
-      // Show to the user what is wrong with provided data
       window.alert("".concat(...patternConfigurator.getUnreadyMessages()));
       console.log("".concat(...patternConfigurator.getUnreadyMessages()));
     }
-    // Reset the configurator
     patternConfigurator.reset();
   }
   return (
     <div className={css.Container}>
       <form onSubmit={onSubmit} className={css.Form}>
         <LabeledUnitSelect style={css.Label} />
-        {/* Generate the inputs for positions */}
         {...Object.keys(patternConfigurator.positions).map((position) => {
           return (
             <label htmlFor={position} className={css.Label}>
@@ -67,7 +55,6 @@ export default function PatternForm({ patternConfigurator, setImageConfig }: IPa
             </label>
           );
         })}
-        {/* Generate the inputs for selects */}
         {...Object.keys(patternConfigurator.selects).map((select) => {
           return (
             <label htmlFor={select} className={css.Label}>
