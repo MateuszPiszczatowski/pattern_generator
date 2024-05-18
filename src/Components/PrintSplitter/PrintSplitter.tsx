@@ -16,14 +16,17 @@ import GuidePage from "../GuidePage/GuidePage";
 import { nanoid } from "nanoid";
 import SizesHelper from "../SizesHelper/SizesHelper";
 
+// Get width of the space that can be drawn on
 function getCanvasDrawWidth(height: number, margin: IMargin): number {
   return height - (margin.left + margin.right);
 }
 
+// Get height of the space that can be drawn on
 function getCanvasDrawHeight(width: number, margin: IMargin): number {
   return width - (margin.top + margin.bottom);
 }
 
+// Get width and height of the space that can be drawn on
 function getCanvasDrawSizes(canvasConfig: {
   width: number;
   height: number;
@@ -35,12 +38,14 @@ function getCanvasDrawSizes(canvasConfig: {
   };
 }
 
+// Get how many pages are needed for one dimension
 function getCanvasCountForOneDimension(paperDrawSize: number, imageSize: number): number {
   const count = imageSize / paperDrawSize;
   const roundedCount = Math.ceil(count);
   return roundedCount;
 }
 
+// Get how many pages are needed to show the image in rows and cols
 function getCanvasPagesCount(
   imageConfig: IImageConfig,
   paperConfig: IPaperConfig
@@ -53,10 +58,13 @@ function getCanvasPagesCount(
   return { rows: pagesRowsCount, cols: pagesColsCount };
 }
 
+/* Get the size of the canvas in pixels from the source element. It's really just taking size from an element,
+ * but it's named that way so it is easy to understand what it's for, when reading the code where it's used. */
 function extractCanvasPxSizes(sourceElem: HTMLDivElement): IWidthAndHeight {
   return { width: sourceElem.offsetWidth, height: sourceElem.offsetHeight };
 }
 
+// Convert margin sizes to pixels
 function getMarginInPx(paperConfig: IPaperConfig, canvasPxSizes: IWidthAndHeight): IMargin {
   return {
     top: (paperConfig.margin.top / paperConfig.height) * canvasPxSizes.height,
@@ -66,6 +74,7 @@ function getMarginInPx(paperConfig: IPaperConfig, canvasPxSizes: IWidthAndHeight
   };
 }
 
+// Get the sizes to traverse when interating over the picture
 function getImageDrawSizes(
   canvasDrawSizes: IWidthAndHeight,
   imageElem: HTMLImageElement
@@ -76,6 +85,7 @@ function getImageDrawSizes(
   };
 }
 
+// On Load event handler
 function onImageLoad(
   canvasHelper: HTMLDivElement,
   paperConfig: IPaperConfig,
@@ -86,20 +96,26 @@ function onImageLoad(
   helpingPage?: JSX.Element,
   sizingPage?: JSX.Element
 ): void {
+  // Get sizes in pixels
   const canvasPxSizes = extractCanvasPxSizes(canvasHelper);
   const marginInPixels = getMarginInPx(paperConfig, canvasPxSizes);
+  // Get draw sizes
   const canvasDrawSizes = getCanvasDrawSizes({
     ...canvasPxSizes,
     margin: marginInPixels,
   });
   const imageDrawSizes = getImageDrawSizes(canvasDrawSizes, imageElem);
+  // An array for all the pages
   const pages: JSX.Element[] = [];
+  // If sizing page should be printed, push apropiate element to the array of pages
   if (sizingPage) {
     pages.push(sizingPage);
   }
+  // If helping page should be printed, push apropiate element to the array of pages
   if (helpingPage) {
     pages.push(helpingPage);
   }
+  // For all the rows and cols, add a page with part of the picture drawn
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       pages.push(
@@ -127,6 +143,7 @@ function onImageLoad(
   }
 }
 
+// A component that displays an image from imageConfig splitted in a way, that it is possible to print it on a paper format described in paperConfig.
 const PrintSplitter = ({
   printGuidePage,
   printSizesHelper,
@@ -134,11 +151,14 @@ const PrintSplitter = ({
   paperConfig,
   helperView,
 }: IPrintSplitterProps) => {
+  // State for pages
   const [pages, setPages] = useState([] as ReactNode[]);
-
+  // Refs for image element and canvas sizing element
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
+  // Determine if the format should be rotated to save paper and how many cols and rows are there. Use memo to not call it unless base variables changed.
   const { cols, rows, paperConfigToUse } = useMemo(() => {
+    // Get rows and cols for non-rotated and rotated format
     const defaultColsAndRows = getCanvasPagesCount(imageConfig, paperConfig);
     const reorientedColsAndRows = getCanvasPagesCount(
       imageConfig,
@@ -146,6 +166,7 @@ const PrintSplitter = ({
     );
     let cols, rows: number;
     let paperConfigToUse: IPaperConfig;
+    // Set cols and rows to these, that end in less cells, if it's rotated, rotate the paper format.
     if (
       defaultColsAndRows.cols * defaultColsAndRows.rows <=
       reorientedColsAndRows.cols * reorientedColsAndRows.rows
@@ -158,10 +179,13 @@ const PrintSplitter = ({
     }
     return { cols, rows, paperConfigToUse };
   }, [imageConfig, paperConfig]);
+  // When component mounted or updated
   useEffect(() => {
     const imageElem = imageRef.current!;
     const canvasSizingHelperElem = canvasSizingHelper.current!;
-    imageElem.onload = () => {
+    // Assign onload to the imageElem
+    imageElem.addEventListener("load", function () {
+      // Call the main functionality
       onImageLoad(
         canvasSizingHelperElem,
         paperConfigToUse,
@@ -174,9 +198,11 @@ const PrintSplitter = ({
         ) : undefined,
         printSizesHelper ? <SizesHelper paperConfig={paperConfigToUse} key={nanoid()} /> : undefined
       );
+      // Hide the image element element
       imageElem.style.visibility = "hidden";
-      imageElem.style.display = "none";
-    };
+      imageElem.style.opacity = "0";
+    });
+    // Load the image to the element. It has to be after the onload assignment.
     imageElem.src = imageConfig.source;
   }, [cols, imageConfig, paperConfig, paperConfigToUse, printGuidePage, printSizesHelper, rows]);
   return (
@@ -190,6 +216,7 @@ const PrintSplitter = ({
           height: `${paperConfigToUse.height}${paperConfigToUse.unit}`,
         }}
       />
+
       <img
         ref={imageRef}
         style={{
@@ -198,6 +225,7 @@ const PrintSplitter = ({
           width: `${imageConfig.width}${imageConfig.unit}`,
           height: `${imageConfig.height}${imageConfig.unit}`,
         }}></img>
+
       <article
         style={{
           display: "flex",
