@@ -17,7 +17,7 @@ The pattern is split for the paper format and gets additional helping elements:
 
 As for the project status, I can think of many things that I may introduce later, but I believe it's advanced enough as it is to be used as a final project for cs50 course. That's why I've created this branch with this CS50 oriented readme that you're reading right now.
 Original repository is avalible under this link: github.com/MateuszPiszczatowski/pattern_generator
-The original project may have been progressed further at the moment of checking this. The proper branch to check it is
+The original project may have been progressed further at the moment of checking this. The branch that is CS50 submission is this one, cs50_final_project. Current progress can be checked on the main branch.
 
 ## Used technologies
 
