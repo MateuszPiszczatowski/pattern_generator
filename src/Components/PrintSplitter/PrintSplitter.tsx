@@ -157,6 +157,8 @@ const PrintSplitter = ({
   const imageRef: MutableRefObject<null | HTMLImageElement> = useRef(null);
   const canvasSizingHelper: MutableRefObject<null | HTMLDivElement> = useRef(null);
   // Determine if the format should be rotated to save paper and how many cols and rows are there. Use memo to not call it unless base variables changed.
+  // It was Copilot (Microsoft AI based on chatgpt) that reminded me of useMemo when I used it to help me find a reason why the component enters an infinite loop of rerendering. 
+  // The mention above is to comply with Academic Honesty rules of CS50.
   const { cols, rows, paperConfigToUse } = useMemo(() => {
     // Get rows and cols for non-rotated and rotated format
     const defaultColsAndRows = getCanvasPagesCount(imageConfig, paperConfig);
